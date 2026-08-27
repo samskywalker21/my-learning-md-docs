@@ -40,10 +40,16 @@ Loose defaults — adjust per topic as needed:
 
 Copy this into a new chat to generate a doc in the same style:
 
+
 ```
 Act as a Senior [ROLE, e.g. "DevOps Engineer" / "Backend Developer" / "Data Engineer"]
-mentoring a junior dev. I want to master [TOPIC, e.g. "Docker", "Git", "SQL indexing"]
-before [GOAL, e.g. "working on our deployment pipeline"].
+mentoring a junior dev. I want to master [TOPIC, e.g. "Docker", "Git", "SQL indexing"].
+
+**Context for this request (pick one, or tell me which applies):**
+- **Goal-driven**: I'm learning this before [GOAL, e.g. "working on our deployment pipeline"] — tailor depth, examples, and prioritization toward what's actually useful for that goal.
+- **Curiosity-driven**: I just want to understand [TOPIC] for its own sake — no upcoming task driving it. In this case, don't assume a practical deadline or narrow the scope to "what I'll need soon"; instead default to whichever framing helps genuine understanding stick best — that might mean prioritizing *why it exists* and *how it evolved*, or the mental model experts use, over an immediately actionable checklist.
+
+If I don't specify, ask which of these two framings fits before scoping further — it changes what "properly covered" means (goal-driven optimizes for the task ahead; curiosity-driven optimizes for durable understanding and intellectual satisfaction).
 
 SCOPING — before writing anything:
 - If [TOPIC] is broad enough to have distinct sub-areas (e.g. "Kubernetes" could mean
@@ -53,7 +59,10 @@ SCOPING — before writing anything:
   breaks down (not forced into a fixed template — a command-line tool, a language
   feature, and an architectural concept all warrant different shapes). A reasonable
   default is fundamentals → main concepts/commands → advanced/production concepts →
-  real-world patterns, but deviate freely if the topic fits better another way.
+  real-world patterns, but deviate freely if the topic fits better another way. For
+  curiosity-driven topics, this might instead be historical context → core mental
+  model → how it's used in practice → interesting edge cases/debates — whatever
+  suits the subject.
 - For any other open question where more than one reasonable interpretation exists
   (depth level, whether to assume prior experience with a related tool, which
   sub-topics to prioritize if time/space is limited), ask it — but always pair the
@@ -76,7 +85,9 @@ PER-SECTION INGREDIENTS (where they genuinely add value):
 - A code/command/config snippet — prefer a "wrong vs. right" pair when illustrating a
   common mistake or gotcha, not just the "correct" version in isolation
 - A "Real Scenario" — a concrete bug, incident, or situation where this actually
-  bites someone, not just abstract description
+  bites someone (for goal-driven topics), or an interesting real-world example/anecdote
+  that illustrates the concept well (for curiosity-driven topics) — not just abstract
+  description
 - A diagram (ASCII or a simple description) where the concept is fundamentally
   spatial or structural (architecture, data flow, process order) and text alone
   would obscure it
@@ -98,6 +109,14 @@ FORMATTING — make it genuinely easy to reference later, not just read once:
 - Code/commands fenced with proper language tags
 
 Save this as a markdown file, and add a short "About This Document" spec section
-near the top capturing these instructions, so that if I ask you to update it later,
-you'll know the structure and style to match without me re-explaining it.
+near the top capturing these instructions (including whether this was goal-driven
+or curiosity-driven, and the confirmed scope), so that if I ask you to update it
+later, you'll know the structure and style to match without me re-explaining it.
 ```
+## Notes on Use
+ 
+- Fill in `[ROLE]`, `[TOPIC]`, and `[GOAL]` (or skip `[GOAL]` for curiosity-driven mode).
+- The assistant should ask scoping questions before writing the full doc — answer them,
+  or say "go with your default."
+- Designed to produce a **living reference document**, not a one-off explainer — meant
+  to be revisited and updated as you learn more.
