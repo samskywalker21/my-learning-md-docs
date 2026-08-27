@@ -1,540 +1,522 @@
-# Mastering Docker — A Reference Guide
+# Docker: A Working Reference (Single-Host + Compose)
 
 ## About This Document
 
-- **Framing:** Goal-driven — optimized for actually developing and deploying production apps in Docker, not general interest.
-- **Scope:** Single-app containers → Docker Compose multi-service setups → production hardening. Kubernetes/orchestration deliberately out of scope (a separate topic).
-- **Assumed background:** None — written from zero Docker experience.
-- **Examples:** Generic/stack-agnostic by request (not tied to Sam's AdonisJS/Nuxt stack).
-- **Sourcing standard:** Version-specific details checked against official docs at `docs.docker.com` as of August 2026, linked inline. Where a common blog convention conflicts with official docs, the official docs win and the conflict is flagged.
-- **Update instructions for future-me:** Match this structure and citation style if asked to update. Keep the wrong-vs-right snippet pattern for gotchas, and keep Kubernetes out unless explicitly asked to add it as a new section.
+**Spec captured from the original request, so future updates match style without re-explaining:**
+
+- **Framing:** Goal-driven — learning Docker toward developing and deploying production apps in containers.
+- **Confirmed scope:** Single-host Docker + Compose only (no Kubernetes/Swarm/orchestration).
+- **Examples:** Generic / stack-agnostic (not tied to a specific framework).
+- **Assumed background:** Basic Linux CLI/networking is _not_ assumed — a short primer is included.
+- **Depth philosophy:** A well-chosen set of concepts covered properly, not exhaustive coverage. Not every section needs every ingredient below.
+- **Per-section ingredients (used where they add value):** plain-language explanation; a "wrong vs. right" snippet pair for common gotchas; a "Real Scenario" grounding the concept in an actual incident/bug; an ASCII diagram where the concept is spatial/structural.
+- **Sourcing rule:** Official Docker docs preferred over blog conventions when they disagree; that disagreement is called out explicitly.
+- **Format:** Clickable TOC, "back to top" links, cheat-sheet tables at the end of major parts, fenced code blocks with language tags.
+- **To update this doc later:** keep this section, keep the structure below, keep the sourcing/accuracy discipline (re-verify anything version-specific before changing it).
 
 ---
 
 ## Table of Contents
 
-1. [What Docker Actually Is](#1-what-docker-actually-is)
-2. [Getting Started](#2-getting-started)
-3. [Images & Dockerfiles](#3-images--dockerfiles)
-4. [Containers & Runtime](#4-containers--runtime)
-5. [Docker Compose](#5-docker-compose)
-6. [Networking & Volumes in Depth](#6-networking--volumes-in-depth)
-7. [Production Hardening](#7-production-hardening)
-8. [Registries & CI/CD](#8-registries--cicd)
-9. [Deploying to Production](#9-deploying-to-production)
-10. [Real-World Patterns & Common Mistakes](#10-real-world-patterns--common-mistakes)
-11. [Cheat Sheets](#11-cheat-sheets)
-12. [Suggested Learning Order](#12-suggested-learning-order)
-13. [Quick Self-Check](#13-quick-self-check)
+- [Part 0: CLI & Networking Primer](#part-0-cli--networking-primer)
+- [Part 1: Fundamentals](#part-1-fundamentals)
+    - [1.1 Containers vs. VMs](#11-containers-vs-vms)
+    - [1.2 Images, Containers, and Layers](#12-images-containers-and-layers)
+    - [1.3 The Client/Daemon Model](#13-the-clientdaemon-model)
+- [Part 2: Core Workflow](#part-2-core-workflow)
+    - [2.1 Writing a Dockerfile](#21-writing-a-dockerfile)
+    - [2.2 Build Context and .dockerignore](#22-build-context-and-dockerignore)
+    - [2.3 Layer Caching](#23-layer-caching)
+    - [2.4 Volumes and Bind Mounts](#24-volumes-and-bind-mounts)
+    - [2.5 Networking Between Containers](#25-networking-between-containers)
+- [Part 3: Docker Compose](#part-3-docker-compose)
+    - [3.1 Why Compose](#31-why-compose)
+    - [3.2 Anatomy of a Compose File](#32-anatomy-of-a-compose-file)
+    - [3.3 The `version:` Key Is Obsolete](#33-the-version-key-is-obsolete)
+    - [3.4 Day-to-Day Compose Commands](#34-day-to-day-compose-commands)
+- [Part 4: Production Concerns](#part-4-production-concerns)
+    - [4.1 Multi-Stage Builds](#41-multi-stage-builds)
+    - [4.2 Image Size and Attack Surface](#42-image-size-and-attack-surface)
+    - [4.3 Running as Non-Root](#43-running-as-non-root)
+    - [4.4 Health Checks](#44-health-checks)
+    - [4.5 Configuration and Secrets](#45-configuration-and-secrets)
+    - [4.6 Logging](#46-logging)
+- [Part 5: Real-World Patterns](#part-5-real-world-patterns)
+    - [5.1 Dev/Prod Parity](#51-devprod-parity)
+    - [5.2 Reverse Proxy in Front of Containers](#52-reverse-proxy-in-front-of-containers)
+    - [5.3 Build-Once, Promote-Everywhere](#53-build-once-promote-everywhere)
+- [Cheat Sheets](#cheat-sheets)
+- [Suggested Learning/Reference Order](#suggested-learningreference-order)
+- [Quick Self-Check](#quick-self-check)
 
 ---
 
-## 1. What Docker Actually Is
+## Part 0: CLI & Networking Primer
 
-**What it is.** Docker packages an application together with everything it needs to run — code, runtime, libraries, system tools — into a single unit called an **image**. A running instance of that image is a **container**. Containers share the host machine's kernel but are isolated from each other and from the host, unlike a virtual machine which virtualizes an entire OS.
+You don't need to be a Linux expert, but a few concepts get referenced constantly below, so here they are up front.
 
-```
- Virtual Machine                          Container
- ┌─────────────────────┐                  ┌─────────────────────┐
- │  App A  │  App B     │                  │  App A  │  App B     │
- │  Bins/  │  Bins/     │                  │  Bins/  │  Bins/     │
- │  Libs   │  Libs      │                  │  Libs   │  Libs      │
- │  Guest  │  Guest     │                  ├─────────┴────────────┤
- │  OS     │  OS        │                  │   Docker Engine       │
- ├─────────┴────────────┤                  ├────────────────────────┤
- │      Hypervisor       │                  │      Host OS Kernel     │
- ├─────────────────────┤                  └────────────────────────┘
- │      Host OS Kernel     │
- └─────────────────────┘
-```
-Each VM ships a full guest OS; containers share one kernel, which is why they start in milliseconds instead of minutes and use a fraction of the resources.
+**Shell basics you'll actually use:**
 
-**Why it matters.** The classic "it works on my machine" problem exists because your machine, your teammate's machine, and the production server all have subtly different library versions, OS patches, and configuration. An image is a single artifact that runs identically everywhere Docker runs — dev laptop, CI runner, production server.
+- A "shell" (bash, zsh, PowerShell) is just the program that reads the commands you type and runs them.
+- `sudo` (Linux/macOS) runs a command with administrator privileges — Docker commands often need this unless your user is in the `docker` group.
+- Flags like `-d` (detached) or `-p 8080:80` (port mapping) modify what a command does; `--` (double dash) usually precedes a full word (`--name`), a single `-` a short letter (`-p`).
 
-**Real scenario.** A team ships an app that depends on a specific native library version. It works for every developer on the team, then breaks in production because the server's OS shipped a different version of that library. Docker doesn't just make this less likely — it makes the *exact* runtime environment reproducible and versionable, so "what changed?" has a git-diffable answer instead of a scavenger hunt through server configuration.
+**Networking basics you'll actually use:**
 
-[⬆ back to top](#table-of-contents)
+- An **IP address** identifies a machine (or container) on a network; a **port** identifies a specific service on that machine (e.g., port 80 for HTTP).
+- **Port mapping/publishing** (`-p host_port:container_port`) connects a port on your real machine to a port inside a container, since containers are otherwise isolated.
+- **DNS** lets you use names instead of IP addresses. Docker gives containers on the same user-defined network automatic name-based DNS — this becomes important in [2.5](#25-networking-between-containers).
+- **localhost** inside a container refers to _that container_, not your host machine or other containers — a extremely common source of confusion covered in the Real Scenario below.
+
+[↑ back to top](#docker-a-working-reference-single-host--compose)
 
 ---
 
-## 2. Getting Started
+## Part 1: Fundamentals
 
-**Install.** Docker Desktop bundles the Engine, CLI, Compose, Buildx, and Docker Scout in one installer — the standard way to get everything working on Windows and macOS. As of mid-2026, Docker Desktop is at version 4.66, running Docker Engine v28.5. ([get-started](https://docs.docker.com/get-started/))
+### 1.1 Containers vs. VMs
 
-- **Windows:** download Docker Desktop, and during setup keep the **"Use WSL 2 instead of Hyper-V"** option checked — this is the current recommended backend on Windows.
-- After install, restart, and Docker Desktop starts automatically in the system tray.
+A **virtual machine** virtualizes an entire computer, including its own kernel — it's heavy but fully isolated. A **container** instead shares the host machine's kernel and uses OS-level isolation (Linux namespaces and cgroups) to make a process _believe_ it has its own filesystem, network stack, and process tree. This is why containers start in milliseconds instead of the minutes a VM takes, and why a single host can run dozens of containers with modest overhead.
 
-**First container:**
-```bash
-docker run hello-world
 ```
-This pulls a tiny test image (if not already cached locally) and runs it — confirming your install works end to end.
-
-**Core commands you'll use constantly:**
-```bash
-docker images              # list images cached locally
-docker ps                  # list running containers
-docker ps -a                # list all containers, including stopped ones
-docker build -t my-app:1.0 .   # build an image from a Dockerfile in the current directory
-docker run -d -p 8080:80 my-app:1.0   # run it, detached, mapping host port 8080 to container port 80
-docker logs -f <container>   # follow a container's stdout/stderr
-docker exec -it <container> sh   # get a shell inside a running container
+VM MODEL                          CONTAINER MODEL
+┌──────────────┐ ┌──────────────┐  ┌──────────────┐ ┌──────────────┐
+│   App A      │ │   App B      │  │   App A      │ │   App B      │
+│  Bins/Libs   │ │  Bins/Libs   │  │  Bins/Libs   │ │  Bins/Libs   │
+│  Guest OS    │ │  Guest OS    │  ├──────────────┤ ├──────────────┤
+├──────────────┤ ├──────────────┤  │        Docker Engine          │
+│         Hypervisor            │  ├────────────────────────────────┤
+├────────────────────────────────┤  │          Host OS Kernel        │
+│          Host OS               │  ├────────────────────────────────┤
+├────────────────────────────────┤  │           Hardware             │
+│           Hardware              │  └────────────────────────────────┘
+└────────────────────────────────┘
 ```
 
-```bash
-# Wrong — forgetting -d leaves the container attached to your terminal,
-# so closing the terminal kills it
-docker run -p 8080:80 my-app:1.0
+The practical consequence: containers are **not** a lightweight VM. Anything that assumes kernel-level isolation (running a different OS, or treating a container as a security boundary against a fully hostile workload) needs extra hardening — see [4.2](#42-image-size-and-attack-surface).
 
-# Right — detach it, and manage it with docker ps / docker logs / docker stop
-docker run -d -p 8080:80 my-app:1.0
-```
+### 1.2 Images, Containers, and Layers
 
-[⬆ back to top](#table-of-contents)
+An **image** is a read-only template — a filesystem snapshot plus metadata (default command, exposed ports, env vars). A **container** is a running (or stopped) _instance_ of an image, with a thin writable layer on top for any changes made at runtime.
+
+- One image → many containers, the same way one class can produce many objects.
+- Each instruction in a Dockerfile (`RUN`, `COPY`, `ADD`) typically creates a new, cached **layer**. Layers are stacked and shared between images that have common ancestry, which is why pulling a second image based on the same parent is often fast.
+
+**Real Scenario:** A team notices `docker run myapp` behaves differently from what's on a colleague's machine. Root cause: the colleague had been iterating with `docker exec` to patch files _inside a running container_, then just kept using that container instead of rebuilding the image. The image on disk never changed. Containers are disposable; images are the source of truth — if it's not in the Dockerfile, it doesn't really exist.
+
+### 1.3 The Client/Daemon Model
+
+The `docker` command you type is a **client**. It talks (usually over a local Unix socket, `/var/run/docker.sock`) to the **Docker daemon** (`dockerd`), a background service that does the actual work: pulling images, creating containers, managing networks and volumes. This is why `docker ps` still works even after you close your terminal — the daemon, and the containers it manages, keep running independently of the client that issued the command.
+
+[↑ back to top](#docker-a-working-reference-single-host--compose)
 
 ---
 
-## 3. Images & Dockerfiles
+## Part 2: Core Workflow
 
-**What it is.** A Dockerfile is a text recipe: a sequence of instructions Docker executes to assemble an image, one layer per instruction. `docker image history <image>` shows you exactly which instruction produced each layer. ([image-building best practices](https://docs.docker.com/get-started/09_image_best/))
+### 2.1 Writing a Dockerfile
 
-**Why layer order matters — caching.** Docker caches each layer. If a layer's inputs haven't changed since the last build, Docker reuses the cached result instead of re-running it. This means instruction *order* is a performance decision, not just style.
+A Dockerfile is a recipe: a sequence of instructions that produce an image.
 
 ```dockerfile
-# Wrong — copying all source before installing dependencies busts the cache
-# on every single code change, forcing a full dependency reinstall each time
-FROM node:20-slim
+# syntax=docker/dockerfile:1
+FROM node:22-bookworm-slim
 WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
 COPY . .
-RUN npm install
 CMD ["node", "server.js"]
+```
 
-# Right — copy only the dependency manifest first; npm install is only
-# re-run when package.json/package-lock.json actually change
-FROM node:20-slim
+Key instructions:
+
+- `FROM` — the base image to build on. Pin a specific tag (`node:22-bookworm-slim`), never rely on the implicit `latest`, or you'll get surprise breakage when the tag moves.
+- `WORKDIR` — sets the working directory for subsequent instructions (and creates it if needed).
+- `COPY` — copies files from the build context into the image. (`ADD` does this too, plus auto-extracts archives and can fetch URLs — official guidance is to prefer `COPY` unless you specifically need `ADD`'s extra behavior, since the "magic" can surprise you.)
+- `RUN` — executes a command _at build time_, producing a new layer.
+- `CMD` — the default command run when a container _starts_. Prefer the exec form (`["node", "server.js"]`) over the shell form (`node server.js`) — the exec form doesn't wrap your process in a shell, so signals like `SIGTERM` reach it directly for clean shutdowns.
+
+**Wrong vs. Right — dependency installation:**
+
+```dockerfile
+# WRONG — copies everything before installing deps,
+# so any source change invalidates the npm install layer
+FROM node:22-bookworm-slim
+WORKDIR /app
+COPY . .
+RUN npm ci
+CMD ["node", "server.js"]
+```
+
+```dockerfile
+# RIGHT — copies only the dependency manifests first,
+# so npm ci is only re-run when dependencies actually change
+FROM node:22-bookworm-slim
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm ci
 COPY . .
 CMD ["node", "server.js"]
 ```
 
-**Pin your base image.** `FROM node:latest` silently builds something different every week and can break without warning. Pin to a specific version, ideally a digest, for reproducible builds:
-```dockerfile
-# Avoid — a moving target
-FROM node:latest
-# Better — a specific version + slim variant
-FROM node:20.11-slim
-# Best — pinned to an immutable digest
-FROM node:20.11-slim@sha256:0e6f...
+The difference is entirely about layer caching order — see [2.3](#23-layer-caching).
+
+Source: [Dockerfile reference (Docker Docs)](https://docs.docker.com/reference/dockerfile/)
+
+### 2.2 Build Context and .dockerignore
+
+When you run `docker build .`, that `.` is the **build context** — the entire directory gets sent to the daemon before any instruction runs, even if your Dockerfile only `COPY`s a fraction of it. Two consequences:
+
+1. A huge context (e.g., an accidentally-included `node_modules` or `.git` folder) slows every build down.
+2. Anything in the context _could_ leak into an image layer, even if a later step doesn't reference it directly — a good reason to keep secrets and local-only files out entirely.
+
+A `.dockerignore` file (same syntax as `.gitignore`) fixes both:
+
+```
+.git
+node_modules
+*.md
+.env*
+Dockerfile*
+docker-compose*
 ```
 
-**Multi-stage builds.** A traditional single-stage build leaves every build tool and intermediate artifact in your final image — bulky and a larger attack surface. Multi-stage builds let you use one stage to compile/build, and copy only the finished artifact into a lean final stage. Recommended for essentially all application types. ([multi-stage builds](https://docs.docker.com/get-started/docker-concepts/building-images/multi-stage-builds/))
+### 2.3 Layer Caching
 
-```dockerfile
-# Stage 1: build
-FROM node:20-slim AS builder
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm install
-COPY . .
-RUN npm run build
+Docker caches each layer and reuses it on the next build **if and only if** the instruction and everything before it are unchanged. This is why instruction _order_ matters: put rarely-changing steps (installing dependencies) before frequently-changing steps (copying application source), so an edit to your source code doesn't force a full dependency reinstall.
 
-# Stage 2: runtime — only the built output and prod deps make it here
-FROM node:20-slim AS final
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm install --omit=dev
-COPY --from=builder /app/dist ./dist
-CMD ["node", "dist/server.js"]
 ```
-The `builder` stage's compilers, dev dependencies, and source maps never reach the final image — smaller size, fewer CVEs to scan for.
-
-**`.dockerignore`.** Works like `.gitignore` for the build context — files matching these patterns are never sent to the Docker daemon and can't accidentally end up `COPY`'d into an image. At minimum: `.env`, `.env.*`, `*.pem`, `*.key`, `node_modules`, `.git`. ([Dockerfile security hardening](https://www.decryptiondigest.com/blog/dockerfile-security-hardening-secure-base-image-cicd-guide))
-
-**`EXPOSE` vs. actually publishing a port** — a common point of confusion:
-```dockerfile
-EXPOSE 8080
+Dockerfile order:           Cache behavior on a source-only change:
+FROM base        ─┐
+WORKDIR /app       │ cached  (unchanged)
+COPY package*.json │ cached  (unchanged)
+RUN npm ci          ┘ cached  (unchanged) ← the expensive step is skipped
+COPY . .           ─┐ invalidated (this is what changed)
+CMD [...]           ┘ invalidated (everything after a cache miss reruns)
 ```
-This is documentation only — it records which port the app listens on but does **not** publish it to the host. You still need `-p` at `docker run` time (or a Compose `ports:` mapping) to actually reach it. ([Dockerfile best practices](https://generalistprogrammer.com/tutorials/dockerfile-best-practices))
 
-**Real scenario.** A 1.2 GB image that takes four minutes to rebuild after a one-line code change, versus a 150 MB image from the same app that rebuilds in seconds — the difference is almost entirely instruction order, multi-stage builds, and base image choice, not anything about the application code itself. ([Dockerfile best practices](https://generalistprogrammer.com/tutorials/dockerfile-best-practices))
+**Real Scenario:** A CI pipeline's Docker build step that used to take 40 seconds started taking 6 minutes on every single commit. The Dockerfile copied the whole repo _before_ installing dependencies, so every commit — even a one-line README fix — invalidated the dependency-install layer and forced a full reinstall. Reordering to copy manifests first (per [2.1](#21-writing-a-dockerfile)) brought it back down to seconds for anything that didn't touch dependencies.
 
-[⬆ back to top](#table-of-contents)
+### 2.4 Volumes and Bind Mounts
+
+Containers are ephemeral by default — delete the container, lose its writable layer. Two mechanisms persist or share data:
+
+- **Volumes** — storage that Docker creates and manages (under `/var/lib/docker/volumes` on Linux), referenced by name. Official guidance treats these as the preferred mechanism for persisting data generated by containers.
+- **Bind mounts** — a specific host path mounted directly into the container. You own the path; Docker doesn't manage it.
+
+|             | Volumes                                        | Bind mounts                                                   |
+| ----------- | ---------------------------------------------- | ------------------------------------------------------------- |
+| Managed by  | Docker                                         | You (the host filesystem)                                     |
+| Good for    | Databases, app state you want Docker to own    | Injecting host-owned files: source code in dev, config, certs |
+| Portability | High — doesn't depend on host directory layout | Low — depends on an exact host path existing                  |
+
+```bash
+# Named volume — Docker manages the storage
+docker run -d -v db_data:/var/lib/postgresql/data postgres:17
+
+# Bind mount — you point at an exact host path (common in local dev,
+# so your live source code shows up inside the container)
+docker run -d -v "$(pwd)":/app -w /app node:22-bookworm-slim npm run dev
+```
+
+Source: [Volumes (Docker Docs)](https://docs.docker.com/engine/storage/volumes/)
+
+### 2.5 Networking Between Containers
+
+By default, every container attaches to Docker's built-in `bridge` network — but containers on that default network can only reach each other by IP address, which is fragile (IPs change). The fix, and the officially recommended pattern, is a **user-defined bridge network**: containers on it get automatic DNS resolution by container name.
+
+```bash
+docker network create app-network
+
+docker run -d --name db --network app-network postgres:17
+docker run -d --name api --network app-network \
+  -e DB_HOST=db myapp:latest
+# inside `api`, the hostname "db" resolves automatically — no IP needed
+```
+
+**Wrong vs. Right:**
+
+```bash
+# WRONG — both containers on the default bridge network;
+# "api" has no reliable way to find "db" by name
+docker run -d --name db postgres:17
+docker run -d --name api -e DB_HOST=db myapp:latest   # DNS lookup for "db" fails
+```
+
+```bash
+# RIGHT — shared user-defined network gives automatic DNS
+docker network create app-network
+docker run -d --name db --network app-network postgres:17
+docker run -d --name api --network app-network -e DB_HOST=db myapp:latest
+```
+
+**Real Scenario:** "It works when I run it manually but the app can't reach the database" is one of the most common Docker support questions — almost always traced to two containers started separately without a shared user-defined network, so the app is trying to resolve a hostname that has no DNS entry anywhere.
+
+Source: [Bridge network driver (Docker Docs)](https://docs.docker.com/engine/network/drivers/bridge/)
+
+[↑ back to top](#docker-a-working-reference-single-host--compose)
 
 ---
 
-## 4. Containers & Runtime
+## Part 3: Docker Compose
 
-**Lifecycle:**
-```
- docker create  ──▶  docker start  ──▶  (running)  ──▶  docker stop  ──▶  docker rm
-       │                                    │
-       └──────────── docker run = create + start ───────┘
-```
+### 3.1 Why Compose
 
-**Common lifecycle commands:**
-```bash
-docker stop <container>     # graceful shutdown (SIGTERM, then SIGKILL after a timeout)
-docker restart <container>
-docker rm <container>       # remove a stopped container
-docker rm -f <container>    # force-stop and remove
-```
+Manually running `docker network create`, then multiple `docker run` commands with matching flags, doesn't scale past a couple of containers and isn't reproducible. **Compose** lets you describe an entire multi-container application — services, networks, volumes — in one YAML file, then bring it all up or down with a single command.
 
-**Environment variables** — pass config at runtime rather than baking it into the image:
-```bash
-docker run -e NODE_ENV=production -e PORT=3000 my-app:1.0
-```
+### 3.2 Anatomy of a Compose File
 
-**Basic networking** — by default, containers on the same user-defined bridge network can reach each other by container name:
-```bash
-docker network create my-net
-docker run --network my-net --name db postgres:18
-docker run --network my-net --name app my-app:1.0   # app can reach "db" by that hostname
-```
-(Full networking model in §6.)
-
-**Basic persistence** — anything written inside a container's writable layer disappears when the container is removed. A named volume survives that:
-```bash
-docker volume create pgdata
-docker run --network my-net --name db -v pgdata:/var/lib/postgresql/data postgres:18
-```
-(Full storage model in §6.)
-
-[⬆ back to top](#table-of-contents)
-
----
-
-## 5. Docker Compose
-
-**What it is.** Compose defines and runs multi-container applications from a single YAML file — instead of remembering a long chain of `docker run` flags for every service, you declare the whole stack once.
-
-**A note on the `version:` key — a real, recent change:** older Compose files started with a `version: "3.8"` line. In current Compose (the Compose Specification, Compose v2), that key is obsolete — Compose ignores it and prints a warning. Modern files start directly with `services:`. If you copy an example from an older tutorial with a `version:` key, it'll still work but will nag you; just delete the line. ([Compose healthchecks guide](https://toolsops.dev/en/guides/docker-compose-healthchecks))
-
-**A realistic multi-service `compose.yaml`** (app + database + reverse proxy):
 ```yaml
 services:
-  app:
-    build: .
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      DATABASE_URL: postgres://user:pass@db:5432/appdb
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/health || exit 1"]
-      interval: 15s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
+    api:
+        build: .
+        ports:
+            - '3000:3000'
+        environment:
+            - DB_HOST=db
+        depends_on:
+            db:
+                condition: service_healthy
 
-  db:
-    image: postgres:18
-    environment:
-      POSTGRES_PASSWORD: pass
-      POSTGRES_DB: appdb
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  nginx:
-    image: nginx:alpine
-    depends_on:
-      app:
-        condition: service_healthy
-    ports:
-      - "80:80"
+    db:
+        image: postgres:17
+        volumes:
+            - db_data:/var/lib/postgresql/data
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U postgres']
+            interval: 5s
+            retries: 5
 
 volumes:
-  pgdata:
+    db_data:
 ```
+
+Notes:
+
+- Every top-level entry under `services` gets its own container, and Compose automatically creates a shared user-defined network for the project — services can already reach each other by service name (`db`, `api`) with no manual network setup, unlike the raw `docker run` case in [2.5](#25-networking-between-containers).
+- `depends_on` with `condition: service_healthy` waits for the dependency's healthcheck to pass, not just for the container to start — see [4.4](#44-health-checks) for why "started" and "actually ready" are different things.
+- Named volumes declared under top-level `volumes:` behave exactly as in [2.4](#24-volumes-and-bind-mounts).
+
+### 3.3 The `version:` Key Is Obsolete
+
+Older tutorials show Compose files starting with `version: "3.8"` or similar. **Current official guidance is to omit this entirely.** The old 2.x/3.x versioned formats have been merged into a single "Compose Specification" that the modern CLI always parses with the latest schema regardless of any `version:` value — the field is now purely informational and produces an obsolete-field warning if present. This is exactly the kind of thing an older blog post will get wrong, so if you see `version:` in a tutorial, drop it.
+
+Source: [Version and name top-level elements (Docker Docs)](https://docs.docker.com/reference/compose-file/version-and-name/)
+
+### 3.4 Day-to-Day Compose Commands
+
 ```bash
-docker compose up -d       # start the whole stack, detached
-docker compose logs -f app # follow one service's logs
-docker compose down        # stop and remove containers (add -v to also remove volumes)
+docker compose up -d          # build (if needed), create, and start everything, detached
+docker compose logs -f api    # stream logs for one service
+docker compose exec api sh    # shell into a running service's container
+docker compose down           # stop and remove containers + the project's network
+docker compose down -v        # ...and also remove named volumes (destructive!)
 ```
 
-**Why `depends_on` alone isn't enough — a very common gotcha:**
-```yaml
-# Wrong — depends_on without a healthcheck only waits for the container to *start*,
-# not for the database to actually be ready to accept connections. The app can
-# crash-loop against a database that's technically "up" but not yet accepting queries.
-services:
-  app:
-    depends_on:
-      - db
-  db:
-    image: postgres:18
+Note the command is `docker compose` (a space, built into the Docker CLI) rather than the older standalone `docker-compose` binary — the hyphenated form is the legacy v1 tool and shouldn't be your starting point for a new setup.
 
-# Right — pair depends_on's long form with a healthcheck, so Compose actually
-# waits for readiness, not just process start
-services:
-  app:
-    depends_on:
-      db:
-        condition: service_healthy
-  db:
-    image: postgres:18
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      retries: 5
-```
-Compose creates services in dependency order and, when a dependency is marked `service_healthy`, waits for its healthcheck to pass before starting the dependent service. ([Compose services reference](https://docs.docker.com/reference/compose-file/services/))
-
-**Referencing the container's own env vars inside a healthcheck command** needs a doubled `$$` — Compose interpolates `$VAR` itself, so `$$VAR` is how you pass a literal `$VAR` through to the container's shell:
-```yaml
-healthcheck:
-  test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
-```
-
-[⬆ back to top](#table-of-contents)
+[↑ back to top](#docker-a-working-reference-single-host--compose)
 
 ---
 
-## 6. Networking & Volumes in Depth
+## Part 4: Production Concerns
 
-**Networking.** Docker networks support different drivers; the default is **bridge**. Containers on the same user-defined bridge network resolve each other by container/service name — this is what makes `DATABASE_URL: postgres://db:5432/...` work in the Compose example above without hardcoding an IP. ([Docker networking](https://blog.vighnesh153.com/2020/12/docker-volumes-and-networking.html))
+### 4.1 Multi-Stage Builds
 
-```
-        user-defined bridge network "my-net"
-   ┌─────────────────────────────────────────┐
-   │   app  ──resolves "db" by name──▶  db     │
-   │                                     │      │
-   │                                nginx (published: 80 → host)
-   └─────────────────────────────────────────┘
-```
-Only the ports you explicitly publish (`ports:` in Compose, or `-p` on `docker run`) are reachable from outside this network — everything else stays internal by default, which is a security property worth keeping, not just a default to override.
+A single-stage Dockerfile that compiles code tends to ship the compiler, build caches, and dev dependencies in the final image — bloated and a larger attack surface. **Multi-stage builds** use more than one `FROM` in the same Dockerfile; each `FROM` starts a fresh stage, and you selectively copy only the finished artifacts forward, leaving the build tooling behind.
 
-**Volumes vs. bind mounts vs. tmpfs** — the three storage options, and when each fits:
-
-| Type | Managed by | Use case |
-|---|---|---|
-| **Volume** | Docker | Persistent app/database data that should survive container removal |
-| **Bind mount** | You (host filesystem path) | Sharing source code into a container during development, or config files |
-| **tmpfs** | Memory only | Data that should never touch disk, lost when the container stops |
-
-```bash
-# Named volume — Docker manages where this actually lives
-docker run -v pgdata:/var/lib/postgresql/data postgres:18
-
-# Bind mount — direct path from your host filesystem
-docker run -v "$(pwd)/src:/app/src" my-app:1.0
-```
-([Sharing local files with containers](https://docs.docker.com/get-started/docker-concepts/running-containers/sharing-local-files/), [Volumes](https://docs.docker.com/engine/storage/volumes/))
-
-```bash
-# Wrong — bind-mounting your whole project root gives the container write
-# access to everything on your host under that path, including files it
-# has no business touching (and vice versa: a compromised container can
-# modify host files)
-docker run -v "$(pwd):/app" my-app:1.0
-
-# Right — bind-mount only what genuinely needs live syncing (source code
-# for dev hot-reload), and use a named volume for anything that's actually
-# data the app owns
-docker run -v "$(pwd)/src:/app/src" -v pgdata:/var/lib/postgresql/data my-app:1.0
-```
-
-**Real scenario.** A container restarts (a routine deploy, a crash, a host reboot) and the database "loses" all its data — panic ensues. In nearly every case, this is because the data directory was never mounted to a volume in the first place: it lived only in the container's writable layer, which is wiped when the container is removed. This is the single most common Docker data-loss story, and the fix is always the same one-line volume mount.
-
-[⬆ back to top](#table-of-contents)
-
----
-
-## 7. Production Hardening
-
-This section is the difference between "it runs in a container" and "it's safe to expose to the internet."
-
-**Run as non-root.** By default, everything in a container — every `RUN`, `COPY`, `CMD` — executes as root. If an attacker exploits a vulnerability in your app, they inherit root inside the container, and depending on host configuration, a container escape can mean root on the *host*. ([Docker security hardening](https://jonesrussell.github.io/blog/docker-security-users/), [Dockerfile security hardening](https://www.decryptiondigest.com/blog/dockerfile-security-hardening-secure-base-image-cicd-guide))
 ```dockerfile
-# Wrong — no USER instruction; the app runs as root, silently
-FROM node:20-slim
+# syntax=docker/dockerfile:1
+
+# Stage 1: build
+FROM node:22-bookworm-slim AS build
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+RUN npm run build && npm prune --omit=dev
+
+# Stage 2: runtime — only the build output and prod deps come along
+FROM node:22-bookworm-slim
+ENV NODE_ENV=production
+WORKDIR /app
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/node_modules ./node_modules
+USER node
+EXPOSE 3000
+CMD ["node", "dist/server.js"]
+```
+
+The final image never contains the TypeScript compiler, dev dependencies, or intermediate build files — only what's needed to actually run the app.
+
+Source: [Multi-stage builds (Docker Docs)](https://docs.docker.com/build/building/multi-stage/)
+
+### 4.2 Image Size and Attack Surface
+
+Every package in your final image is something that can have a vulnerability. Official current guidance favors minimal base image variants:
+
+- `-slim` variants (Debian-based, no build tooling) — a reasonable default for most apps.
+- `alpine` variants — smaller still, but based on musl libc rather than glibc, which occasionally breaks native dependencies that assume glibc.
+- **Distroless** images — no shell, no package manager at all; smallest attack surface, but harder to debug (you can't `docker exec ... sh` into them).
+
+Avoid `latest` and avoid unpinned generic images (`ubuntu:latest`) in production — pin a specific tag (or a digest, for full reproducibility) so a base-image update doesn't silently change your build.
+
+### 4.3 Running as Non-Root
+
+By default, a process in a container that doesn't specify otherwise runs as **root** — same privilege level the daemon itself often has. If an attacker breaks out of the application (e.g., via a code injection vulnerability), running as root inside the container makes any container-escape vector far more dangerous.
+
+**Wrong vs. Right:**
+
+```dockerfile
+# WRONG — no USER set; process runs as root by default
+FROM node:22-bookworm-slim
 WORKDIR /app
 COPY . .
 CMD ["node", "server.js"]
+```
 
-# Right — create and switch to an unprivileged user before CMD
-FROM node:20-slim
+```dockerfile
+# RIGHT — drop to a non-root user before running the app
+FROM node:22-bookworm-slim
 WORKDIR /app
-COPY --chown=node:node . .
+COPY . .
 USER node
 CMD ["node", "server.js"]
 ```
-(Many official images, like `node`, already ship a non-root `node` user you can switch to — check the image's docs before creating your own.)
 
-**Keep secrets out of the image, at build time and at runtime.** Anything passed via `ARG` or baked into a layer via `COPY`/`ENV` can be extracted from the image by anyone who pulls it, even after later layers "remove" it. Use BuildKit secret mounts for build-time credentials — they're available only for the duration of a single `RUN` instruction and never land in a layer:
+(Many official images, including `node`, already ship a non-root `node` user you can switch to — check whether your base image already provides one before creating a fresh one with `useradd`.)
+
+### 4.4 Health Checks
+
+By default, Docker (and Compose) only knows whether a container's main **process** is alive, not whether the service inside it is actually able to serve traffic. A `HEALTHCHECK` closes that gap by running a command on an interval and marking the container `healthy` or `unhealthy` based on its exit code.
+
 ```dockerfile
-# syntax=docker/dockerfile:1
-FROM python:3.12-slim
-RUN --mount=type=secret,id=npm_token \
-    NPM_TOKEN=$(cat /run/secrets/npm_token) && pip install --no-cache-dir -r requirements.txt
-```
-```bash
-docker build --secret id=npm_token,src=./token.txt -t my-app .
-```
-For runtime secrets (database passwords, API keys the running app needs), inject them as environment variables from a vault or your platform's secret manager — never commit them into `compose.yaml` or the image. ([Build secrets](https://docs.docker.com/build/building/secrets.md), [Docker security guide](https://techoral.com/docker/phase-8-security.html))
-
-**Resource limits.** Without limits, one runaway container can starve every other container on the host:
-```bash
-docker run --memory=512m --cpus=1 my-app:1.0
-```
-In Compose:
-```yaml
-services:
-  app:
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: "1.0"
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
+  CMD ["node", "healthcheck.js"]
 ```
 
-**Health checks are a production requirement, not a nicety.** Without one, a process can crash-loop, hang, or serve incomplete responses while Docker still reports the container as "running" — a false-positive state that costs real debugging time in an incident. (§5 covers the Compose syntax.)
+Use the exec form (`CMD [...]`) rather than the shell form here too, especially for minimal/shell-less images, so the check doesn't depend on a shell being present.
 
-**Scan images before shipping.** Docker Scout ships built into Docker Desktop; Trivy and Snyk are common alternatives. Fail the build on critical/high CVEs in CI rather than catching them after deploy:
-```bash
-docker scout cves my-app:latest
-```
-([Docker security best practices](https://www.salayan.com/blog/docker-security-best-practices-2026-a-practical-guide))
+**Real Scenario:** A service starts, opens its port immediately, but takes 15 seconds to finish loading a large in-memory cache before it can actually answer requests correctly. Without a healthcheck, `depends_on` (in Compose) or a load balancer sees "port is open" and routes traffic immediately, resulting in a burst of errors during every deploy. A healthcheck that pings a real readiness endpoint — not just "is the process alive" — fixes this by making dependents wait for `healthy`, not just `started`.
 
-**A pre-production checklist worth keeping** (adapted from common industry guides — not exhaustive, but catches the expensive mistakes):
-```
-✅ Non-root USER in the Dockerfile
-✅ Minimal, pinned base image
-✅ No secrets in ENV, ARG, or image layers — BuildKit secret mounts for build-time creds
-✅ .dockerignore excludes .env, .git, keys
-✅ Image scanned — no critical CVEs
-✅ Healthcheck defined for every long-running service
-✅ Resource limits set (memory, CPU)
-✅ Only necessary ports published
-✅ Logs go to stdout/stderr, not files inside the container
-```
-([Docker tricks 2026](https://devkraken.com/blog/docker-tricks-2026/), [Docker security: rootless containers](https://techoral.com/docker/phase-8-security.html))
+### 4.5 Configuration and Secrets
 
-[⬆ back to top](#table-of-contents)
+Bake as little environment-specific config into the image as possible; inject it at runtime instead (`environment:` / `env_file:` in Compose, or `-e` on `docker run`). This is what makes "build once, promote the same image through every environment" (see [5.3](#53-build-once-promote-everywhere)) possible.
+
+For actual secrets (API keys, DB passwords), avoid `ENV` or `ARG` in a Dockerfile — both can end up visible in image history or layer metadata. Prefer runtime injection (env vars supplied only when the container starts, not baked into the image) or Docker's dedicated build-time secret mounts for anything needed only during the build.
+
+### 4.6 Logging
+
+The default logging model is simple: write to `stdout`/`stderr`, and let `docker logs` (or `docker compose logs`) capture it — don't have your application manage its own log files inside the container. This keeps the container's filesystem stateless and lets you swap the logging backend (e.g., forwarding to a centralized log system) without touching application code.
+
+[↑ back to top](#docker-a-working-reference-single-host--compose)
 
 ---
 
-## 8. Registries & CI/CD
+## Part 5: Real-World Patterns
 
-**What it is.** A registry stores and distributes images. Docker Hub is the default public registry; most teams also use a private registry (a cloud provider's, GitHub Container Registry, or a self-hosted one) for proprietary images.
+### 5.1 Dev/Prod Parity
 
-**Tagging and pushing:**
+The goal: your Compose setup for local development should exercise the _same_ image and topology as production, differing only in configuration — not "a totally different set of Dockerfiles that happen to run the same app." A common way to do this without duplicating everything: a base Compose file plus an override file for local-only additions (extra debug ports, bind-mounted source for hot reload).
+
 ```bash
-docker build -t myregistry.example.com/my-app:1.2.0 .
-docker push myregistry.example.com/my-app:1.2.0
-```
-```bash
-# Wrong — tagging everything "latest" makes it impossible to know which
-# actual build is running in production, or to roll back to a known-good one
-docker build -t my-app:latest .
-
-# Right — tag with something traceable: a semver, or the git commit SHA
-docker build -t my-app:1.2.0 -t my-app:$(git rev-parse --short HEAD) .
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up
 ```
 
-**CI/CD pattern.** A typical pipeline: on merge to main, CI builds the image, scans it, pushes it to the registry tagged with the commit SHA, then triggers a deploy that pulls that exact tag. This is what makes "roll back to the previous version" a one-line operation instead of a rebuild-and-hope.
+### 5.2 Reverse Proxy in Front of Containers
 
-[⬆ back to top](#table-of-contents)
+A very common single-host production pattern: one reverse proxy container (Nginx, Caddy, Traefik) is the only thing with a port published to the outside world; every application container sits behind it on the internal user-defined network and is reached by service name.
 
----
+```
+        Internet
+            │
+            ▼
+   ┌─────────────────┐
+   │  reverse proxy   │  (port 80/443 published)
+   │  (nginx/caddy)   │
+   └────────┬─────────┘
+            │  internal network, by service name
+   ┌────────┼─────────┐
+   ▼                  ▼
+┌────────┐       ┌────────┐
+│  api   │       │  web   │   (no ports published directly)
+└────────┘       └────────┘
+```
 
-## 9. Deploying to Production
+This means application containers themselves never need a port published to the host — only the proxy does — reducing your actual attack surface.
 
-**Where Compose fits, and where it stops.** Docker Compose is well-suited to production for a single host — small-to-medium deployments, up to roughly 10–20 containers on one machine. Beyond that (multi-host, automatic scaling, self-healing, rolling updates across a fleet), you're in orchestrator territory — Kubernetes is the dominant option, deliberately out of scope for this document. Most teams start with Compose for development and a single-host deploy, and graduate to an orchestrator only once they actually need multi-host scaling. ([Docker tutorial 2026](https://tech-insider.org/docker-tutorial-beginners-containerization-2026/))
+### 5.3 Build-Once, Promote-Everywhere
 
-**Zero-downtime patterns worth knowing even on a single host:**
-- Health-check-gated rollout: don't route traffic to a new container until its healthcheck passes (this is what the `service_healthy` pattern in §5 sets you up for).
-- Keep the previous image tag around so a bad deploy is a `docker run <previous-tag>` away, not a rebuild.
-- `docker compose up -d` with an unchanged `compose.yaml` for unaffected services only recreates the containers whose config actually changed — it won't blindly restart everything.
+Rebuilding an image separately for each environment (dev image, staging image, prod image) invites exactly the "works in staging, breaks in prod" class of bug, because the artifact itself differs, not just its configuration. The pattern that holds up: build **one** image, tag it, and promote that same tag through staging into production; only the environment configuration (env vars, secrets, replica count) changes between environments, never the image contents.
 
-**Logging.** Send application logs to stdout/stderr rather than to files inside the container — this is what lets `docker logs` and any log-aggregation tooling (Loki, CloudWatch, etc.) pick them up without extra plumbing. A container writing logs only to its own internal filesystem loses them the moment it's removed.
-
-[⬆ back to top](#table-of-contents)
-
----
-
-## 10. Real-World Patterns & Common Mistakes
-
-**"My database loses data on every restart."** Almost always a missing volume mount for the data directory (§6). Check `docker volume ls` — if you don't see a volume for it, that's the bug.
-
-**"depends_on isn't working — my app crashes trying to reach the database."** `depends_on` without `condition: service_healthy` only waits for the container process to *start*, not for the service inside to be ready to accept connections (§5). Add a healthcheck.
-
-**"My image is huge and takes forever to rebuild."** Almost always: no multi-stage build, dependencies re-copied/reinstalled before source code (busting the cache on every change), or a full OS base image instead of a slim/alpine variant (§3).
-
-**"It works locally but breaks in the container."** Check for anything that assumes the host filesystem, host networking (`localhost` meaning something different inside vs. outside a container), or environment variables that exist on your machine but were never passed into the container.
-
-**"A container I thought I removed is still using disk space / a port."** Stopped containers aren't automatically removed; `docker ps -a` shows them, `docker system prune` cleans up dangling images, stopped containers, and unused networks (review what it'll remove first — it's not selective by default).
-
-**Common mistake — treating `docker run -v $(pwd):/app` as harmless.** It's fine for quick local experiments, but in anything approaching production it hands the container broad write access to your host filesystem under that path (§6) — scope bind mounts to exactly what needs to be shared.
-
-[⬆ back to top](#table-of-contents)
+[↑ back to top](#docker-a-working-reference-single-host--compose)
 
 ---
 
-## 11. Cheat Sheets
+## Cheat Sheets
 
 ### Core CLI
-| Command | Purpose |
-|---|---|
-| `docker build -t name:tag .` | Build an image from a Dockerfile |
-| `docker run -d -p host:container image` | Run detached, with port mapping |
-| `docker ps` / `docker ps -a` | List running / all containers |
-| `docker logs -f <container>` | Follow logs |
-| `docker exec -it <container> sh` | Shell into a running container |
-| `docker stop` / `docker rm` | Stop / remove a container |
-| `docker image history <image>` | See how an image's layers were built |
-| `docker scout cves <image>` | Scan for known vulnerabilities |
-| `docker system prune` | Clean up unused images/containers/networks |
 
-### Compose
-| Command | Purpose |
-|---|---|
-| `docker compose up -d` | Start the stack, detached |
-| `docker compose down` | Stop and remove (`-v` also removes volumes) |
-| `docker compose logs -f <service>` | Follow one service's logs |
-| `docker compose build` | Rebuild images defined by `build:` |
+| Command                                      | What it does                                                          |
+| -------------------------------------------- | --------------------------------------------------------------------- |
+| `docker build -t name:tag .`                 | Build an image from the Dockerfile in the current directory           |
+| `docker run -d -p 8080:80 name:tag`          | Run a container, detached, mapping host port 8080 → container port 80 |
+| `docker ps` / `docker ps -a`                 | List running / all containers                                         |
+| `docker logs -f <container>`                 | Stream a container's logs                                             |
+| `docker exec -it <container> sh`             | Open a shell inside a running container                               |
+| `docker stop` / `docker rm`                  | Stop / remove a container                                             |
+| `docker image prune` / `docker system prune` | Reclaim disk space from unused images/objects                         |
+| `docker network create <name>`               | Create a user-defined bridge network                                  |
 
-### Storage decision
-| Need | Use |
-|---|---|
-| Database/app data that must survive container removal | Named **volume** |
-| Live-syncing source code during dev | **Bind mount** |
-| Sensitive data that should never touch disk | **tmpfs** |
+### Compose CLI
 
-### Dockerfile security essentials
-`USER` (non-root) · pinned base image · multi-stage build · `.dockerignore` · BuildKit `--mount=type=secret` for build-time creds · `HEALTHCHECK`
+| Command                            | What it does                                       |
+| ---------------------------------- | -------------------------------------------------- |
+| `docker compose up -d`             | Build (if needed) and start all services, detached |
+| `docker compose down`              | Stop and remove containers + project network       |
+| `docker compose down -v`           | ...and also remove named volumes                   |
+| `docker compose logs -f <service>` | Stream one service's logs                          |
+| `docker compose exec <service> sh` | Shell into a running service                       |
+| `docker compose build --no-cache`  | Force a full rebuild, ignoring the layer cache     |
 
-[⬆ back to top](#table-of-contents)
+### Dockerfile Instructions
+
+| Instruction   | Purpose                                                                                |
+| ------------- | -------------------------------------------------------------------------------------- |
+| `FROM`        | Base image                                                                             |
+| `WORKDIR`     | Set working directory for subsequent instructions                                      |
+| `COPY`        | Copy files from build context into the image                                           |
+| `RUN`         | Execute a command at build time (new layer)                                            |
+| `ENV`         | Set an environment variable (baked into the image — not for secrets)                   |
+| `EXPOSE`      | Document which port the container listens on (informational only — doesn't publish it) |
+| `USER`        | Drop to a non-root user for subsequent instructions and at runtime                     |
+| `HEALTHCHECK` | Define how Docker checks whether the container is actually healthy                     |
+| `CMD`         | Default command when the container starts (exec form preferred)                        |
+
+[↑ back to top](#docker-a-working-reference-single-host--compose)
 
 ---
 
-## 12. Suggested Learning Order
+## Suggested Learning/Reference Order
 
-1. **Install Docker Desktop, run `hello-world`** (§2) — confirm the install works before touching a real app.
-2. **Containerize one real app with a plain (single-stage) Dockerfile** (§3, §4) — get something running end to end before optimizing it.
-3. **Convert it to a multi-stage build and add a non-root `USER`** (§3, §7) — see the image size drop, understand why.
-4. **Add a second service (a database) with Docker Compose** (§5) — this is where `depends_on` + healthchecks starts to matter.
-5. **Deliberately break the healthcheck/depends_on setup once**, on purpose, so you recognize the failure mode later (§5, §10).
-6. **Add volumes for anything with state** (§6) — verify data survives a `docker compose down && docker compose up`.
-7. **Run the pre-production checklist against your app** (§7) — non-root, secrets, resource limits, scanning.
-8. **Push to a registry with a real tag, not `latest`** (§8).
-9. **Only then** look at what changes for multi-host deployment — and treat that as the point where Kubernetes or another orchestrator becomes a separate, deliberate topic to learn.
+1. **Part 0 + Part 1** — get the mental model (images vs. containers, client/daemon) before touching commands.
+2. **Part 2** — write and run a single-service Dockerfile against your own app; get comfortable with caching order and volumes/networking with plain `docker run`.
+3. **Part 3** — move to Compose once you have 2+ services that need to talk to each other (e.g., app + database).
+4. **Part 4** — once something works, harden it: multi-stage build, non-root, healthcheck, proper config/secret handling.
+5. **Part 5** — once you're deploying somewhere real, adopt the reverse-proxy and build-once-promote patterns.
 
-## 13. Quick Self-Check
+Come back to Part 4 specifically whenever you're about to ship a new service to production — it's the part most tutorials skip.
 
-- What's the actual difference between an image and a container?
-- Why does instruction *order* in a Dockerfile affect build speed, not just correctness?
-- What does a multi-stage build remove from your final image that a single-stage build doesn't?
-- Why isn't `depends_on` alone enough to guarantee a database is ready before your app starts?
-- What's the difference between a named volume and a bind mount, and when would you pick each?
-- Why is running a container as root a security risk even though the container is "isolated"?
-- Where do build-time secrets end up if you pass them via `ARG` instead of a BuildKit secret mount — and why does that matter even after the image is built?
-- At roughly what point does Docker Compose stop being the right tool for production, and what takes over?
+## Quick Self-Check
 
-[⬆ back to top](#table-of-contents)
+- Why does editing your source code sometimes force a full dependency reinstall in a Docker build — and how do you prevent it?
+- Two containers started with plain `docker run` can't reach each other by name. What's missing?
+- What's actually wrong with using `latest` as a base image tag in production?
+- Why doesn't `EXPOSE` alone make a port reachable from outside the container?
+- Why is running a container process as root riskier than it sounds, even though the container is "isolated"?
+- What's the practical difference between a container being "started" and being "healthy," and which one should a dependent service wait for?
+- Why is removing the `version:` key from a Compose file now the recommended practice instead of a lint nitpick?
+- What problem do multi-stage builds solve that a `.dockerignore` file doesn't?
+- In the build-once-promote-everywhere pattern, what's allowed to differ between staging and production, and what isn't?
+
+[↑ back to top](#docker-a-working-reference-single-host--compose)
