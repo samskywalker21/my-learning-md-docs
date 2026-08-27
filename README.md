@@ -15,9 +15,9 @@ One folder per topic, one or more markdown docs inside:
 
 ## 📖 Index
 
-| Topic | Doc | Status |
+| Topic | Doc | Last Updated |
 |---|---|---|
-| React / JS / TS | [`react-nextjs/react-concepts-before-nextjs.md`](./react-nextjs/react-concepts-before-nextjs.md) | ✅ |
+| React / JS / TS | [`react-nextjs/react-concepts-before-nextjs.md`](./react-nextjs/react-concepts-before-nextjs.md) | August 27, 2026 |
 
 *(Add a row whenever a new doc is added. Status: 📝 in progress · ✅ done · 🔄 needs update — or whatever markers are useful.)*
 
