@@ -18,10 +18,13 @@ One folder per topic, one or more markdown docs inside:
 | Topic | Doc | Last Updated |
 |---|---|---|
 | React / JS / TS | [`react-nextjs/react-concepts-before-nextjs.md`](./react-nextjs/react-concepts-before-nextjs.md) | August 27, 2026 |
+| Bun | [`bunjs/bunjs-mastery-guide.md`](./bunjs/bunjs-mastery-guide.md) | September 3, 2026 |
 | Claude Code / Agent SDK / API | [`claude/claude-code-mastery-guide.md`](./claude/claude-code-mastery-guide.md) | September 3, 2026 |
 | Docker | [`docker/docker-mastery-guide.md`](./docker/docker-mastery-guide.md) | — |
 | JavaScript | [`javascript/javascript-mastery-guide.md`](./javascript/javascript-mastery-guide.md) | September 3, 2026 |
+| Node.js | [`nodejs/nodejs-mastery-guide.md`](./nodejs/nodejs-mastery-guide.md) | September 3, 2026 |
 | Postgres SQL | [`postgres/postgres-mastery-guide.md`](./postgres/postgres-mastery-guide.md) | September 3, 2026 |
+| Vite | [`vite/vite-mastery-guide.md`](./vite/vite-mastery-guide.md) | September 3, 2026 |
 
 *(Add a row whenever a new doc is added. Status: 📝 in progress · ✅ done · 🔄 needs update — or whatever markers are useful.)*
 
