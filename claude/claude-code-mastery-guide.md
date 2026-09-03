@@ -1,307 +1,263 @@
-# Mastering Claude Code — A Reference Guide
+# Mastering Claude Code, the Agent SDK & the Claude API — A Reference Guide
 
 ## About This Document
 
-- **Framing:** Mixed goal-driven + curiosity-driven. Practical enough to start using Claude Code well immediately, but sections also cover *why* things are built the way they are (e.g. why hooks exist as a separate layer from CLAUDE.md) where that context helps the mental model stick.
-- **Scope:** Comprehensive coverage of Claude Code — not just daily CLI usage, but memory, permissions, subagents, skills, hooks, MCP, plugins, automation, and the newer non-terminal surfaces (Desktop, Web, Routines).
-- **Assumed background:** None. Written from zero — no prior CLAUDE.md/Copilot-instructions knowledge assumed, even though some was mentioned in passing before.
-- **Reader context:** Sam, a developer working primarily in an AdonisJS + Nuxt 3/Vue stack, on Windows with Laragon/Nginx. Examples lean toward that stack where a concrete example helps, but the concepts apply to any codebase.
-- **Sourcing standard:** Version-specific details (commands, flags, config syntax) are checked against the official docs at `code.claude.com/docs` as of August 2026 and linked inline. Where a community blog's convention conflicts with the official docs, the official docs win and the conflict is flagged.
-- **Update instructions for future-me:** If you ask me to update this later, match this structure, this citation style (inline links, official docs preferred), and keep the wrong-vs-right snippet pattern for gotchas. Add new sections rather than restructuring unless the topic itself has changed shape.
+- **Framing:** Goal-driven. Written for a developer learning this before moving into Agentic Engineering / AI-Driven development — depth, examples, and prioritization are tailored toward the concrete commands, APIs, flags, and config actually touched for that goal, not general topical coverage.
+- **Depth tiers:** Every major Part below is structured as four progressive, explicitly labeled tiers — **Beginner → Working Knowledge → Advanced → Mastery** — so you can stop reading at whichever level you currently need. A tier is collapsed or merged into its neighbor where it would otherwise be trivial or redundant for that topic (this happens most in Parts IV–V, which get Beginner → Working Knowledge → Advanced, since Mastery-level SDK/API internals matter less for this reader's stated goal than daily-driver CLI fluency does).
+- **Scope:** Everything — daily CLI usage, memory, permissions, subagents, skills, hooks, MCP, automation/headless mode, the Claude Agent SDK, and Claude API fundamentals (Messages API, tool use, streaming, caching, model selection). SDK/API code examples are given in **both TypeScript and Python**.
+- **Assumed background:** None. Written from zero.
+- **Sourcing standard:** Version-specific details (commands, flags, config syntax, model IDs) were checked against official docs (`code.claude.com/docs`, `platform.claude.com/docs`) as of September 2026, cited inline. Stack Overflow / community sources are used only for real-world gotchas, and are flagged as such — official docs win on any conflict. **Exact pricing is deliberately not hardcoded** anywhere in this document — it changes too often to be trustworthy in a reference doc; live links to the pricing page are given instead.
+- **Update instructions for future-me:** If asked to update this later — match this exact structure (Parts, each with explicit tier subheadings), keep the wrong-vs-right snippet pattern for gotchas, keep TOC + back-to-top links, and add new Parts/tiers rather than reverting to freeform prose. If a section's tiers feel forced or redundant, collapsing tiers is expected and consistent with this doc's own stated approach — don't treat that as a deviation to fix.
 
 ---
 
 ## Table of Contents
 
-1. [What Claude Code Actually Is](#1-what-claude-code-actually-is)
-2. [Getting Started](#2-getting-started)
-3. [Memory: CLAUDE.md & Auto Memory](#3-memory-claudemd--auto-memory)
-4. [Everyday Workflows](#4-everyday-workflows)
-5. [Permissions & Safety](#5-permissions--safety)
-6. [Subagents](#6-subagents)
-7. [Skills & Slash Commands](#7-skills--slash-commands)
-8. [Hooks](#8-hooks)
-9. [MCP (Model Context Protocol)](#9-mcp-model-context-protocol)
-10. [Plugins & Marketplaces](#10-plugins--marketplaces)
-11. [Automation & CI](#11-automation--ci)
-12. [Beyond the Terminal](#12-beyond-the-terminal)
-13. [Real-World Patterns & Common Mistakes](#13-real-world-patterns--common-mistakes)
-14. [Cheat Sheets](#14-cheat-sheets)
-15. [Suggested Learning Order](#15-suggested-learning-order)
-16. [Quick Self-Check](#16-quick-self-check)
+1. [Orientation — The Agentic Loop & Where Everything Fits](#1-orientation--the-agentic-loop--where-everything-fits)
+2. [Part I — Core CLI Daily Driver](#2-part-i--core-cli-daily-driver)
+3. [Part II — Extensibility & Config](#3-part-ii--extensibility--config)
+4. [Part III — Automation & Headless](#4-part-iii--automation--headless)
+5. [Part IV — Claude Agent SDK](#5-part-iv--claude-agent-sdk)
+6. [Part V — Claude API Fundamentals](#6-part-v--claude-api-fundamentals)
+7. [Cheat Sheets](#7-cheat-sheets)
+8. [Suggested Learning Order](#8-suggested-learning-order)
+9. [Quick Self-Check](#9-quick-self-check)
 
 ---
 
-## 1. What Claude Code Actually Is
+## 1. Orientation — The Agentic Loop & Where Everything Fits
 
-**What it is.** Claude Code is an agentic coding tool: instead of suggesting the next line of code (autocomplete-style, like GitHub Copilot), it reads your whole project, plans an approach, edits files across your codebase, runs commands, observes the results, and iterates — largely on its own. ([overview](https://code.claude.com/docs/en/overview))
+**What it is.** Claude Code is an agentic coding tool: instead of suggesting the next line (autocomplete-style), it reads your whole project, plans an approach, edits files, runs commands, observes results, and iterates — largely on its own. ([overview](https://code.claude.com/docs/en/overview))
 
-**Why it matters.** This is the single biggest mental-model shift if you're coming from Copilot or plain chat-based AI help. You're not reviewing suggestions token-by-token — you're delegating a task and reviewing an outcome. That changes what you need to get good at: not "write a better prompt for this one line," but "scope a task well, set guardrails, and review a diff."
+**Why it matters.** This is the mental-model shift that everything else in this document hangs off. You're not reviewing suggestions token-by-token — you're delegating a task and reviewing an outcome. Every mechanism below (permissions, hooks, subagents, skills, MCP) is a way of shaping one step of the same underlying loop:
 
-**The agentic loop.** Every action Claude Code takes goes through the same loop:
-
-```
+```text
  ┌─────────────────────────────────────────────────────────┐
- │  1. Understand the goal (your prompt + CLAUDE.md +      │
- │     auto memory + conversation history)                 │
- │  2. Gather info (read files, search, grep)               │
+ │  1. Understand the goal (prompt + CLAUDE.md + auto       │
+ │     memory + conversation history)                       │
+ │  2. Gather info (read files, search, grep)                │
  │  3. Decide next action, pick a tool                       │
- │  4. Permission check (rules → hooks → prompt if needed)   │
- │  5. Execute (edit file / run command / call MCP tool)     │
- │  6. Observe result                                        │
- │  7. Verify (run tests, check output)                      │
- │  8. If insufficient → back to step 2                       │
- │  9. Stop when the goal is met                              │
+ │  4. Permission check (deny → ask → allow → hooks)          │
+ │  5. Execute (edit file / run command / call MCP tool)      │
+ │  6. Observe result                                         │
+ │  7. Verify (run tests, check output)                       │
+ │  8. If insufficient → back to step 2                        │
+ │  9. Stop when the goal is met                               │
  └─────────────────────────────────────────────────────────┘
 ```
 
-Nearly everything in this document is a way of shaping one part of that loop: CLAUDE.md and auto memory shape step 1, permissions and hooks gate step 4, subagents and skills change *who* runs steps 2–7, and MCP adds new tools to step 3.
+**Where the layers sit.** Claude Code (the CLI), the Agent SDK, and the raw Claude API are the *same* underlying engine at increasing levels of exposure — this is worth internalizing before Part IV/V, because it means everything you learn in Parts I–III (permission modes, tool concepts, hooks) transfers directly into code:
 
-**Surfaces.** The same engine runs everywhere: Terminal CLI (full-featured, scriptable), VS Code / JetBrains extensions (inline diffs in your editor), a standalone Desktop app, and a web version at claude.ai/code. A repo's CLAUDE.md, settings, and MCP servers work identically across all of them. ([overview](https://code.claude.com/docs/en/overview))
+```text
+        Claude API (raw Messages API — you build everything yourself)
+                          │
+                          │  adds: agentic loop, built-in tools
+                          │  (Read/Edit/Bash/...), context/compaction,
+                          │  permission system
+                          ▼
+              Claude Agent SDK (embeddable library — Part IV)
+                          │
+                          │  adds: terminal UI, REPL, session files,
+                          │  slash commands, CLAUDE.md auto-loading
+                          ▼
+              Claude Code (the CLI — Parts I–III)
+```
 
-**Real scenario.** A dev on a mid-sized Vue/Nuxt team asks Claude Code to "add a `deletedAt` soft-delete column to the `users` table, update the model, and fix every query that assumes hard deletes." A Copilot-style tool can't do this — it has no way to *find* every affected query and *act* across files. Claude Code greps the codebase, finds the query sites, edits the migration, the model, and each affected query, runs the test suite, and reports what it changed. Your job shifts from writing each fix to reviewing the diff and the test output.
+**Real scenario.** A dev asks Claude Code to "add a `deletedAt` soft-delete column to the `users` table, update the model, and fix every query that assumes hard deletes." A Copilot-style autocomplete tool can't do this — it can't *find* every affected query and *act* across files. Claude Code greps the codebase, edits the migration, the model, and each affected query, runs the test suite, and reports what changed. Your job shifts from writing each fix to reviewing the diff and test output.
 
 [⬆ back to top](#table-of-contents)
 
 ---
 
-## 2. Getting Started
+## 2. Part I — Core CLI Daily Driver
 
-**Requirements:** Node.js 18+, and a Claude.ai (recommended) or Anthropic Console account. ([overview](https://code.claude.com/docs/en/overview))
+Covers: installation & auth, sessions, context management, permission modes, built-in tools, invoking subagents & skills.
 
-**Install (macOS/Linux/WSL):**
+### Beginner
+
+**Install & first run.**
+
 ```bash
+# macOS/Linux/WSL
 curl -fsSL https://claude.ai/install.sh | bash
 ```
 
-**Install (Windows PowerShell)** — this is your default environment on Laragon/Windows:
 ```powershell
+# Windows PowerShell
 irm https://claude.ai/install.ps1 | iex
 ```
-> Native installs auto-update in the background. If you use Homebrew or WinGet instead, those channels do **not** auto-update — you'll need `brew upgrade claude-code` or `winget upgrade Anthropic.ClaudeCode` periodically. ([overview](https://code.claude.com/docs/en/overview))
 
-**First run:**
+```bash
+# or via npm (Node.js 22+)
+npm install -g @anthropic-ai/claude-code
+```
+
+Native installs (`install.sh`/`install.ps1`) auto-update in the background; Homebrew/WinGet installs do **not** — run `brew upgrade claude-code` or `winget upgrade Anthropic.ClaudeCode` periodically. ([setup](https://code.claude.com/docs/en/setup.md))
+
 ```bash
 cd your-project
-claude
+claude          # starts an interactive session; prompts for /login on first use
 ```
-You'll be prompted to log in on first use.
 
 **Two fundamentally different modes:**
 
 | Mode | Command | What happens |
-|---|---|---|
-| Interactive | `claude` | Opens a REPL session; you converse turn by turn |
-| Print / headless | `claude -p "task"` | Runs one query, prints the result, exits — no interactive prompts |
+| --- | --- | --- |
+| Interactive (REPL) | `claude` | Opens a conversational session; you converse turn by turn |
+| Print / headless | `claude -p "task"` | Runs once, prints the result, exits — no back-and-forth (foundation for Part III) |
 
 ```bash
-# Wrong: expecting -p to behave interactively
+# Wrong — expecting -p to behave interactively
 claude -p "fix the failing tests"
-# ...then trying to answer a follow-up question — there's no session left to answer into.
+# ...then trying to answer a follow-up — there's no session left to answer into.
 
-# Right: use -p for scripts/CI where you don't want a back-and-forth,
-# use plain `claude` when you want to steer the work as it happens.
+# Right — use -p for one-shot/scripted work, plain `claude` to steer as it happens
 claude "fix the failing tests"
 ```
 
-Print mode (`-p`) is the foundation for every automation use case later in this doc (§11). ([cli-reference](https://code.claude.com/docs/en/cli-reference))
+**Auth precedence** (highest wins): cloud provider env var (Bedrock/Vertex/Foundry) → `ANTHROPIC_AUTH_TOKEN` → `ANTHROPIC_API_KEY` → `apiKeyHelper` script → `CLAUDE_CODE_OAUTH_TOKEN` → `/login` credential. A stray `ANTHROPIC_API_KEY` left set in your shell silently overrides a Claude Pro/Max subscription login — if `claude` seems to be billing your API key instead of your subscription, `unset ANTHROPIC_API_KEY` first. ([authentication](https://code.claude.com/docs/en/authentication.md))
 
-[⬆ back to top](#table-of-contents)
+### Working Knowledge
 
----
+**Resuming sessions:**
 
-## 3. Memory: CLAUDE.md & Auto Memory
-
-**What it is.** Every session starts with a *fresh* context window — Claude doesn't remember yesterday's conversation by default. Two mechanisms carry knowledge across sessions instead:
-
-- **CLAUDE.md** — instructions *you* write
-- **Auto memory** — notes *Claude* writes itself, based on your corrections and preferences, without you asking
-
-Both load automatically at the start of every conversation and are treated as context Claude tries to follow — not hard-enforced rules. ([memory](https://code.claude.com/docs/en/memory))
-
-**Why the distinction matters:** if something must *never* happen (not just "please don't"), CLAUDE.md is the wrong tool — that's what hooks are for (§8). CLAUDE.md is a request, not a guard rail.
-
-**The four CLAUDE.md scopes**, broadest to narrowest:
-
-| Scope | Location | Purpose | Shared with |
-|---|---|---|---|
-| Enterprise policy | e.g. `C:\ProgramData\ClaudeCode\CLAUDE.md` (Windows) | Org-wide rules | Everyone in the org |
-| Project memory | `./CLAUDE.md` at repo root | Team-shared conventions | Team, via git |
-| User memory | `~/.claude/CLAUDE.md` | Your personal preferences, all projects | Just you |
-| Project memory (local) | `./CLAUDE.local.md` | Personal, project-specific overrides | Just you, this project |
-
-Higher-in-hierarchy files load first, forming a base the more specific ones build on. ([memory](https://code.claude.com/docs/en/memory))
-
-> **Flag — conflicting info in the wild:** some 2026 community write-ups describe `CLAUDE.local.md` as deprecated. The official docs still treat it as a first-class scope. Follow the official docs on this.
-
-**Imports** — pull other files into CLAUDE.md with `@path`:
-```markdown
-See @README for project overview and @package.json for available npm commands.
-
-## Additional Instructions
-- git workflow: @docs/git-instructions.md
-```
-Both relative and absolute paths work; importing a file from your home directory is a convenient way to share personal instructions that aren't checked into the repo. ([memory](https://code.claude.com/docs/en/memory))
-
-**Keep it short.** A long CLAUDE.md loads in full, every session, before any real work starts — eating your context budget. A widely-repeated rule from the Claude Code team: keep it around 100 lines; for large domain docs, reference a separate file instead of inlining everything. ([neurohive guide](https://neurohive.io/en/guides/claude-code-getting-started-guide/))
-
-```markdown
-# Wrong — a CLAUDE.md that re-derives what the codebase already shows
-## Directory Structure
-- /app - main application
-- /app/controllers - HTTP controllers
-- /app/models - Lucid models
-- /config - Adonis config files
-... (200 more lines Claude could get from `ls` in two seconds)
-
-# Right — pitfalls and conventions Claude can't derive from the code alone
-## Conventions
-- Use AdonisJS validators (`app/validators`), never inline `request.input()` validation
-- Nuxt pages use `<script setup>` only — no Options API, even in old files
-- Run `node ace migration:run` before starting the dev server after pulling
-```
-The `/doctor` command can propose trims for a checked-in CLAUDE.md automatically, cutting content Claude can derive from the codebase while keeping pitfalls and conventions. (Requires Claude Code v2.1.206+.) ([memory](https://code.claude.com/docs/en/memory))
-
-**Auto memory.** On by default. As Claude works, it writes durable notes to `~/.claude/projects/<project>/memory/` — build commands, debugging insights, your corrections — without you asking. `MEMORY.md` is the always-loaded index (kept under ~200 lines); detailed notes overflow into topic files. You can say "remember: always use pnpm, not npm" directly in conversation, or "forget the rule about pnpm" to undo it. Run `/memory` to browse, toggle, or edit what's been saved — it's all plain markdown. ([memory](https://code.claude.com/docs/en/memory))
-
-**Real scenario.** You correct Claude three sessions in a row for using `npm` instead of your project's `pnpm`. With auto memory, by the third correction Claude has usually already written itself a note and stopped making the mistake — you didn't have to add anything to CLAUDE.md by hand. If it *keeps* happening, that's a sign to promote the rule into CLAUDE.md explicitly, since auto memory is a courtesy, not a guarantee.
-
-[⬆ back to top](#table-of-contents)
-
----
-
-## 4. Everyday Workflows
-
-These are prompt patterns for the tasks you'll do constantly. All work identically across surfaces. ([common-workflows](https://code.claude.com/docs/en/common-workflows))
-
-**Exploring unfamiliar code:**
 ```bash
-claude "explain how authentication works in this codebase and show me the key files"
+claude -c                          # continue the most recent session, this directory
+claude -r "session-name" "task"    # resume a specific named session
+claude --resume                    # open an interactive picker
 ```
 
-**Fixing a bug from an error message** — paste the error, don't pre-diagnose it:
+Sessions are stored as `.jsonl` files under `~/.claude/projects/<project>/`; the session ID is printed at session start.
+
+**Context management — what auto-loads every session:** system prompt, auto memory (`MEMORY.md`, capped at ~200 lines / 25 KB), environment info (platform/shell/git branch), skill descriptions (one-liners only, not full bodies), then CLAUDE.md files in order: managed policy → `~/.claude/CLAUDE.md` (user) → ancestor dirs → project root → `.claude/CLAUDE.local.md` (personal, gitignored). ([memory](https://code.claude.com/docs/en/memory.md), [context-window](https://code.claude.com/docs/en/context-window.md))
+
 ```bash
-# Less effective: you've already guessed the cause, narrowing Claude's search
-claude "the JWT expiry check must be wrong, fix it"
-
-# More effective: give the symptom, let Claude trace the actual cause
-claude "I'm getting 'jwt malformed' on login after 24h uptime. Find the cause and fix it."
+/context           # shows current token usage, loaded files, tools
+/compact [notes]    # summarizes conversation history, optionally focused on your criteria
+/clear [name]        # discards conversation, starts fresh (old one stays in the session picker)
 ```
 
-**Refactoring:**
+**Permission modes** — the mode governs how much runs without asking you:
+
+| Mode | Behavior |
+| --- | --- |
+| `default` (aka "Manual") | Reads auto-approved; everything else prompts |
+| `acceptEdits` | File edits auto-approved; other shell commands still confirm |
+| `plan` | Read-only research + proposal; nothing executes until you approve the plan |
+| `auto` | A classifier reviews actions in the background; safe ones proceed silently |
+| `bypassPermissions` (`--dangerously-skip-permissions`) | Nothing prompts — sandboxed environments only |
+
+Cycle modes live with `Shift+Tab`; set one for the session with `claude --permission-mode plan`. ([permission-modes](https://code.claude.com/docs/en/permission-modes.md))
+
 ```bash
-claude "update this file to use Composition API patterns consistent with the rest of the codebase"
+# Plan before editing anything risky or unfamiliar
+claude --permission-mode plan "propose a plan to migrate this table's soft-deletes, don't change anything yet"
 ```
 
-**Tests** — be specific about *behavior*, not just "add tests":
+**Built-in tools:**
+
+| Tool | Does | Key gotcha |
+| --- | --- | --- |
+| Read | Returns file contents (text/image/PDF≤20pg/notebook) | No prompt inside working dir |
+| Write | Creates/overwrites a **whole** file | Full replacement only — no partial edits |
+| Edit | Targeted exact-string replacement | Must `Read` the file first in-session; no regex/fuzzy matching |
+| Bash | Runs shell commands | Sandboxed by default on macOS/Linux/WSL2, **not** Windows native |
+| Grep | ripgrep-based search | Respects `.gitignore` by default |
+| Glob | Filename pattern search | Does **not** respect `.gitignore` (opposite of Grep) |
+| WebFetch | Fetches a URL, extracts an answer via a small model | Lossy by design — use `curl` via Bash for raw HTML |
+| WebSearch | Web search integrated into context | Domain safety checks apply |
+
+**Invoking a subagent or skill directly:**
+
 ```bash
-claude "add tests for the checkout validator covering: missing email, expired discount code,
-and quantity below the minimum order size"
-```
-Claude examines your existing test files first to match style and conventions already in use — you get tests that look like they were written by your team, not a generic template.
-
-**Resuming across sittings:**
-```bash
-claude -c              # continue the most recent session in this directory
-claude -r "session-name" "continue this PR"   # resume a specific named session
+claude "use a subagent to find every call site of the deprecated claims API, summarize — don't change anything"
+/deploy      # runs a custom skill or slash command by name
 ```
 
-**Parallel work with git worktrees** — run two Claude Code sessions on the same repo without them stepping on each other's edits (e.g. one fixing a bug while another builds a feature):
-```bash
-git worktree add ../myproject-feature-x feature-x
-cd ../myproject-feature-x && claude
-```
+### Advanced
 
-**Plan before editing** — for anything risky or unfamiliar, ask Claude to propose a plan first, review it, then let it execute:
-```bash
-claude "propose a plan to migrate this table's soft-deletes, but don't make any changes yet"
-```
-This maps to **Plan mode**, which restricts Claude to read-only exploration and proposal — no file writes, no commands that mutate state — until you approve. ([Best Claude Code Plugins](https://www.marktechpost.com/2026/06/14/claude-code-guide-2026-25-features-with-examples-demo/))
+**Permission rule syntax and evaluation order** — this is the part people get wrong. A `deny` rule always wins, even against a broader `allow` rule elsewhere:
 
-**Delegating research to keep context clean** — see §6 (Subagents) for why this matters.
-
-[⬆ back to top](#table-of-contents)
-
----
-
-## 5. Permissions & Safety
-
-**What it is.** Every tool call Claude wants to make — editing a file, running a shell command, calling an MCP tool — passes through a permission check first. The result is one of three: **allow** (proceeds silently), **ask** (you're prompted), or **deny** (blocked outright). ([permissions](https://code.claude.com/docs/en/permissions))
-
-**Why it matters — real scenario.** In 2026, multiple developers reported losing significant work after granting an autonomous coding agent broad filesystem/infra access without oversight — including at least one case of a production database being wiped by an agent stuck in a correction loop. Claude Code's permission system exists specifically to keep a human in the loop for anything destructive, and to make it possible to *safely* automate the rest. ([neurohive guide](https://neurohive.io/en/guides/claude-code-getting-started-guide/))
-
-**Evaluation order** — this is the part people get wrong:
-
-```
+```text
    deny  ─────▶  ask  ─────▶  allow  ─────▶  (no match) defaultMode
-  (blocks,     (prompts,     (proceeds
-  first match   first match   silently)
-  wins)         wins)
+  (blocks,      (prompts,     (proceeds
+  first match    first match   silently)
+  wins)          wins)
 ```
-A `deny` rule always wins, even against a broader `allow` elsewhere — a `deny` on `Read(./.env)` blocks it even if you also `allow` `Read(./**)`. ([permissions](https://code.claude.com/docs/en/permissions))
 
-**Rule syntax** — `Tool` or `Tool(specifier)`:
 ```json
 {
   "permissions": {
-    "allow": ["Bash(git status)", "Bash(git diff:*)", "Bash(npm run lint:*)", "Read(./**)"],
+    "allow": ["Bash(git status)", "Bash(git diff:*)", "Read(./**)"],
     "deny":  ["Bash(rm -rf:*)", "Read(./.env)", "Read(./.env.*)"],
     "ask":   ["Bash(git push:*)"]
   }
 }
 ```
+
 ```bash
-# Wrong — assumes this blocks the .env file from ever reaching Claude's context
+# Wrong — assuming this fully blocks .env from ever reaching Claude's context
 "deny": ["Read(./.env)"]
-# This only blocks the Read tool (and a few related built-ins like Grep/Glob) from
-# that specific file. Another tool path could still surface its contents.
-# Right — for anything truly sensitive, don't rely on a deny rule alone;
-# keep secrets out of the working directory Claude has access to, or use a hook (§8).
+# Only blocks the Read tool (and a few related built-ins) from that specific path.
+# Another tool path could still surface its contents.
+
+# Right — for anything truly sensitive, don't rely on a deny rule alone; keep
+# secrets out of the working directory Claude has access to, or enforce with a
+# hook (Part II) that hard-blocks regardless of tool path.
 ```
 
-**Permission modes** (set via `defaultMode` or `--permission-mode`):
+**`bypassPermissions` vs. `--dangerously-skip-permissions`:** the flag sets the mode and disables all prompts for that launch; the mode itself can also be cycled to via `Shift+Tab` mid-session. Either way, this should only run inside a fully isolated environment (container/VM/CI runner with no real credentials) — never on your local machine with real credentials present. Claude Code refuses to start in this mode with root/sudo on Linux/macOS specifically to make accidental misuse harder. ([permissions](https://code.claude.com/docs/en/permissions.md))
 
-| Mode | Behavior |
-|---|---|
-| `default` | Prompts on first use of each tool |
-| `acceptEdits` | File reads/writes proceed freely; shell commands still confirm |
-| `plan` | Read-only; Claude can analyze and propose but not execute |
-| `bypassPermissions` (`--dangerously-skip-permissions`) | Skips all checks |
+**Real scenario — the failure mode this guards against.** Multiple developers in 2026 reported losing significant work after granting an autonomous agent broad filesystem/infra access without oversight, including at least one production database wiped by an agent stuck in a correction loop. The permission system exists specifically to keep a human in the loop for anything destructive while still allowing everything else to run smoothly. ([community writeup](https://neurohive.io/en/guides/claude-code-getting-started-guide/))
 
-`bypassPermissions` should only be used inside a fully isolated environment — a container, VM, or CI runner with no real credentials — never on your local machine. Claude Code even refuses to start in this mode with root/sudo privileges on Linux/macOS, specifically to prevent this misuse. ([permissions](https://code.claude.com/docs/en/permissions), [dangerously-skip-permissions guide](https://www.morphllm.com/claude-code-dangerously-skip-permissions))
+### Mastery
 
-Manage rules interactively any time with `/permissions` (aliased `/allowed-tools`).
+- **CLAUDE.md loading is a hierarchy, not a merge of equals.** Project `.claude/settings.json` setting `defaultMode: "auto"` or `"bypassPermissions"` is **silently ignored** — those two modes only take effect from `~/.claude/settings.json` (user) or managed/enterprise settings, never from project-level config. This is a deliberate guard: a malicious or careless project-committed settings file can't unilaterally disable your prompts.
+- **Auto memory internals.** Claude writes durable notes to `~/.claude/projects/<project>/memory/` as it works — without being asked — capturing build commands, debugging insights, and your corrections. `MEMORY.md` is the always-loaded index (hard-capped at ~200 lines / 25 KB — Claude Code errors and tells Claude to trim it if it grows past that); detailed notes overflow into topic files that load on demand. `/memory` browses/edits it directly.
+- **Session resumption and permission-mode restoration have edge cases**: `claude --continue`/`--resume` restore the permission mode of the resumed session, with specific exceptions around `plan` and `auto` mode — a `claude -p --continue` run doesn't necessarily inherit the same restoration logic as an interactive resume. If a scripted resume behaves differently than the interactive one did, this is the first thing to check.
+- **Glob's 100-file cap and mtime-sort** mean a broad glob on a large repo silently returns only the 100 most-recently-modified matches — a common source of "it didn't find X" bugs when X hasn't been touched recently. Narrow the pattern rather than assuming Glob is exhaustive.
 
 [⬆ back to top](#table-of-contents)
 
 ---
 
-## 6. Subagents
+## 3. Part II — Extensibility & Config
 
-**What it is.** A subagent is a separate Claude instance the main session spawns for a scoped task. It gets its own context window, its own system prompt, and its own tool permissions — and when it finishes, only its *summary* comes back to the main conversation. ([sub-agents](https://code.claude.com/docs/en/sub-agents), [subagents blog](https://claude.com/blog/subagents-in-claude-code))
+Covers: CLAUDE.md authoring, `settings.json`, hooks, MCP servers, authoring skills, authoring subagents.
 
-**Why it matters.** Context is a limited, shared resource. If you ask Claude to "find every call site of this function across the repo," it might read 40 files — and now those 40 files are crowding your main conversation, slowing every future turn and pushing you toward auto-compaction. A subagent absorbs that cost in its own isolated window and hands back only the conclusion.
+### Beginner
 
-```
- Main session (your conversation)
- │
- ├──▶ Explore subagent   (read-only search)         ──▶ returns: "auth logic is in
- │                                                        middleware/auth.ts, called
- │                                                        from 6 route files: [...]"
- ├──▶ Plan subagent      (research + propose plan)  ──▶ returns: implementation plan
- │
- └──▶ general-purpose subagent (multi-step task)    ──▶ returns: result summary
+**CLAUDE.md** is project instructions loaded into every session — conventions, architecture notes, gotchas Claude can't infer from the code itself.
 
- Only the returned summaries enter the main context — not the 40 files each subagent read.
-```
+```markdown
+# Wrong — re-derives what the codebase already shows
+## Directory Structure
+- /app - main application
+- /app/controllers - HTTP controllers
+... (200 more lines `ls` would tell Claude in two seconds)
 
-**Built-in subagents:** `Explore` (fast, read-only code search), `Plan` (research-then-propose, no edits), and `general-purpose` (multi-step tasks). Claude often spawns these on its own; you can also direct it explicitly:
-```bash
-claude "use a subagent to find every place we call the deprecated PhilHealth claims API,
-then summarize the call sites — don't change anything yet"
+# Right — pitfalls and conventions Claude genuinely can't derive from the code
+## Conventions
+- Use AdonisJS validators (`app/validators`), never inline `request.input()` validation
+- Run `node ace migration:run` before starting the dev server after pulling
 ```
 
-**Custom subagents** are markdown files with YAML frontmatter, in `.claude/agents/` (project, shared with the team) or `~/.claude/agents/` (personal, all projects):
+**A minimal skill** is a folder with one file:
+
+```text
+.claude/skills/lint-js/SKILL.md
+```
+
+```markdown
+---
+name: lint-js
+description: Run ESLint and report issues. Use when the user says "lint" or "check for lint errors".
+---
+Run ESLint on the project and explain any issues found.
+```
+
+**A minimal subagent** is a markdown file with YAML frontmatter in `.claude/agents/`:
+
 ```markdown
 ---
 name: code-reviewer
@@ -311,58 +267,25 @@ tools: Read, Grep, Glob, Bash
 You are a code reviewer. Read the most recent diff, check for bugs, security
 issues, and style problems, and return a prioritized list with file/line refs.
 ```
-Once defined, Claude delegates to it automatically whenever a task matches the `description` — no need to invoke it by name every time. The `/agents` command walks through creating one interactively. ([subagents blog](https://claude.com/blog/subagents-in-claude-code))
 
-**Foreground vs. background:** foreground subagents block the main conversation until done, with permission prompts passed through to you. Background subagents run concurrently while you keep working — press `Ctrl+B` to send a running subagent to the background, and check on it with `/tasks`. ([subagents blog](https://claude.com/blog/subagents-in-claude-code))
+### Working Knowledge
 
-**Real scenario.** Reviewing a large PR: rather than one agent doing style checks, security scanning, and test-coverage analysis sequentially, you spawn three specialized subagents in parallel — `style-checker`, `security-scanner`, `test-coverage` — cutting review time from minutes to seconds versus doing it one pass at a time. ([Agent SDK subagents](https://platform.claude.com/docs/en/agent-sdk/subagents))
+**`settings.json` precedence** (highest to lowest): `.claude/settings.local.json` (machine-specific, gitignored) → `.claude/settings.json` (project, committed) → `~/.claude/settings.json` (user, all projects) → managed/enterprise settings. More restrictive always wins at any level. ([settings-reference](https://code.claude.com/docs/en/settings-reference.md))
 
-**Common mistake:** reaching for a subagent for every small task. A subagent has real overhead (spinning up its own context, then summarizing back). Reserve it for genuinely token-heavy exploration or parallelizable work — not a two-line question you could just ask directly.
-
-[⬆ back to top](#table-of-contents)
-
----
-
-## 7. Skills & Slash Commands
-
-**What it is.** A skill is a folder — `.claude/skills/<name>/` (project) or `~/.claude/skills/<name>/` (personal) — containing a `SKILL.md` file with YAML frontmatter (`name`, `description`) and markdown instructions. Claude reads every skill's description at session start and can invoke the matching one automatically when relevant — or you can invoke it directly with `/<name>`. A file at `.claude/commands/deploy.md` and a skill at `.claude/skills/deploy/SKILL.md` both create a `/deploy` command and work the same way; your existing `.claude/commands/` files keep working unchanged. ([skills](https://code.claude.com/docs/en/skills))
-
-**Why the description field is the whole game.** Claude matches your request against the `description` to decide what fires. A vague description ("manages my project") won't match a concrete request ("set up the project here") — write the description using the literal phrases you'd actually type. This is the single most common reason a skill never triggers. ([skill-creation guide](https://codemeetai.substack.com/p/how-to-create-a-claude-code-skill))
-
-```markdown
-# Wrong — abstract, won't match real requests
----
-name: deploy
-description: Handles deployment tasks.
----
-
-# Right — concrete phrases a user would actually type
----
-name: deploy
-description: Deploy the app to staging or production. Use when the user says
-"deploy to staging", "ship this to prod", or "push the release".
----
+```json
+{
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": ["Bash(npm run lint:*)"],
+    "deny": ["Bash(rm -rf:*)"]
+  },
+  "env": { "NODE_ENV": "development" }
+}
 ```
 
-**Minimum viable skill** is about 30 lines. Anything beyond required frontmatter + instructions (subdirectories for scripts, `references/` for background docs Claude reads but doesn't copy, `templates/` for files Claude copies with placeholders) is optional. ([skill-creation guide](https://codemeetai.substack.com/p/how-to-create-a-claude-code-skill))
+**Hooks** are shell commands the harness runs automatically at lifecycle points — the enforcement layer CLAUDE.md can't be, since CLAUDE.md is a request the model tries to follow and a hook is a guarantee the harness enforces regardless of what the model decides.
 
-**Built-in bundled skills:** `/doctor` (diagnostics), `/code-review`, `/batch`, `/debug`, `/loop`. These are prompt-based — they give Claude detailed instructions and let it orchestrate the work with its normal tools, rather than running external code. ([skills](https://code.claude.com/docs/en/skills))
-
-**Trust boundary — flagged deliberately:** skills give Claude new instructions and can direct it to invoke tools in ways that don't match the skill's stated purpose. Only use skills from trusted sources — ones you wrote yourself or that come from Anthropic. Treat a downloaded community skill the way you'd treat an unreviewed dependency. ([Agent Skills overview](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview))
-
-**Real scenario.** You keep pasting the same "run migrations, seed test data, start the dev server" checklist into chat before every testing session. Turned into a `/verify` skill, it becomes a one-word command — and if Claude has to run it without a recorded recipe, newer versions can *write* the steps that worked back into the skill file automatically, so later runs (yours or a teammate's) follow the same steps. (Requires Claude Code v2.1.200+.) ([skills](https://code.claude.com/docs/en/skills))
-
-[⬆ back to top](#table-of-contents)
-
----
-
-## 8. Hooks
-
-**What it is.** Hooks are shell commands (or LLM-evaluated prompts) that fire automatically at specific points in Claude Code's lifecycle — before a tool runs, after it runs, when a session starts, when Claude tries to stop. Configured as JSON in your settings files. ([hooks](https://code.claude.com/docs/en/hooks))
-
-**Why this is the most important mental-model shift after the agentic loop itself:** CLAUDE.md and skills are *instructions* — Claude reads them and tries to comply, but there's no runtime guarantee. If something must happen *every single time, no exceptions*, that belongs in a hook instead, because a hook is enforced by the harness, not by the model choosing to comply.
-
-```
+```text
                  Tool call about to happen
                           │
                           ▼
@@ -372,226 +295,427 @@ description: Deploy the app to staging or production. Use when the user says
                  └────────┬────────┘
                           │ allowed
                           ▼
-                    permission check (§5: deny → ask → allow)
+                    permission check (deny → ask → allow)
                           │
                           ▼
                      tool executes
                           │
                           ▼
                  ┌─────────────────┐
-                 │  PostToolUse    │──── runs formatters, linters,
-                 │      hook       │     validators after the fact
+                 │  PostToolUse    │──── e.g. auto-format after every Edit/Write
+                 │      hook       │
                  └─────────────────┘
 ```
 
-Important nuance: a hook can only make things *stricter*, never looser. If a hook returns "allow" but a `deny` or `ask` rule in settings still matches, the settings rule wins — a hook cannot grant more access than the permission system already allows. ([permissions](https://code.claude.com/docs/en/permissions))
-
-**Auto-format after every edit (PostToolUse):**
 ```json
 {
   "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          { "type": "command", "command": "f=$(jq -r '.tool_input.file_path'); [ \"${f##*.}\" = ts ] && npx prettier --write \"$f\"; true" }
-        ]
-      }
-    ]
+    "PostToolUse": [{
+      "matcher": "Edit|Write",
+      "hooks": [{ "type": "command", "command": "jq -r '.tool_input.file_path' | xargs npx prettier --write" }]
+    }]
   }
 }
 ```
-The trailing `; true` matters — without it, a formatter error would block Claude for no good reason. ([hooks example, dev.to](https://dev.to/ohugonnot/claude-code-hooks-real-examples-posttooluse-stop-pretooluse-620))
 
-**Block edits to protected files (PreToolUse):**
+**Adding an MCP server** (extends Claude's tools beyond the built-ins — issue trackers, databases, internal tooling):
+
+```bash
+claude mcp add --transport http github --scope project https://api.githubcopilot.com/mcp/
+claude mcp add --transport stdio airtable --env AIRTABLE_API_KEY=YOUR_KEY -- npx -y airtable-mcp-server
+```
+
+Scopes: `local` (default, private to you) → `project` (`.mcp.json`, shared via git) → `user` (all your projects). Manage connected servers with `/mcp`.
+
+### Advanced
+
+**Hook types beyond `command`:** `type: "prompt"` (LLM-evaluated), `type: "agent"`, and `type: "http"` also exist, alongside the standard shell `command` hooks — useful when the gate condition needs judgment rather than a fixed shell check. Timeouts differ by type (`command`/`http`/`mcp_tool`: 10 min default; `prompt`: 30s; `agent`: 60s). ([hooks-guide](https://code.claude.com/docs/en/hooks-guide.md))
+
 ```json
 {
   "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          { "type": "command", "command": "FILE=$(cat | jq -r '.tool_input.file_path // empty'); if echo \"$FILE\" | grep -qE '(\\.env|\\.lock|id_rsa|\\.pem)'; then echo \"BLOCKED: protected file\" >&2; exit 2; fi" }
-        ]
-      }
-    ]
+    "PreToolUse": [{
+      "matcher": "Edit|Write",
+      "hooks": [{
+        "type": "command",
+        "command": "FILE=$(cat | jq -r '.tool_input.file_path // empty'); if echo \"$FILE\" | grep -qE '(\\.env|\\.lock|id_rsa|\\.pem)'; then echo \"BLOCKED: protected file\" >&2; exit 2; fi"
+      }]
+    }]
   }
 }
 ```
+
 ```bash
 # Wrong — relying on a CLAUDE.md line: "never edit .env files"
 # This is a request. A determined or confused agent can still edit it.
 
-# Right — enforce it with a PreToolUse hook that exits 2 (see above).
+# Right — enforce with a PreToolUse hook that exits 2 (above).
 # The instruction becomes structurally impossible to violate, not just discouraged.
 ```
 
-**Key events worth knowing** (there are more — see the reference): `PreToolUse`, `PostToolUse`, `Notification`, `Stop` (Claude finished responding), `SubagentStop`, `SessionStart`, `PreCompact`. ([hooks reference](https://code.claude.com/docs/en/hooks), [hooks guide](https://www.pixelmojo.io/blogs/claude-code-hooks-production-quality-ci-cd-patterns))
+Important nuance: a hook can only make things *stricter*, never looser — if a hook returns "allow" but a `deny`/`ask` rule in settings still matches, the settings rule wins. A hook cannot grant more access than the permission system already allows.
 
-**The decision rule to internalize:** *Skill* teaches the how. *Hook* enforces the rule. *Subagent* isolates the work. Use whichever matches what you actually need — a skill for a repeatable workflow, a hook for a non-negotiable, a subagent to protect context.
+**MCP OAuth flow:** add the server without credentials, then either run `/mcp` inside a session and follow the browser login, or `claude mcp login <server>` from the CLI (v2.1.186+). Use `--` to separate Claude's own flags from the server command when adding a stdio server — omitting it causes the server's args to be misparsed as Claude Code options.
 
-[⬆ back to top](#table-of-contents)
+**Custom subagent frontmatter fields in full:** `name`, `description` (drives auto-delegation matching — be concrete: "fixes failing tests" beats "helps with testing"), `tools` (allowlist; defaults to all if omitted), `model` (`inherit`/`sonnet`/`opus`/`haiku`/`fable`), `permissionMode`, `memory` (`user`/`project`/`local` — enables persistent auto memory scoped to that subagent). `/agents` walks through creating one interactively.
 
----
+**Skill triggering mechanics:** Claude matches your request against each skill's `description` at session start (only the one-liner loads then — the full body loads on demand). A vague description ("manages my project") won't match a concrete request ("set up the project here"); write descriptions using the literal phrases a user would actually type. Set `disable-model-invocation: true` to make a skill manual-only, invoked strictly via `/name`.
 
-## 9. MCP (Model Context Protocol)
+### Mastery
 
-**What it is.** MCP is an open standard for connecting Claude Code to tools beyond its built-ins — an issue tracker, a database, a browser, your team's internal tooling. These come from MCP *servers*, which run locally or as a hosted service. ([mcp-quickstart](https://code.claude.com/docs/en/mcp-quickstart))
-
-**Adding a server:**
-```bash
-# HTTP transport (recommended — more reliable than SSE)
-claude mcp add --transport http notion https://mcp.notion.com/mcp
-
-# Local stdio server (runs a program on your machine)
-claude mcp add --transport stdio airtable --env AIRTABLE_API_KEY=YOUR_KEY -- npx -y airtable-mcp-server
-```
-Inside a session, `/mcp` checks and manages servers you've already added.
-
-**Scopes:**
-
-| Scope | Flag | Visibility |
-|---|---|---|
-| local (default) | *(none)* | Private to you, this project only |
-| project | `--scope project` | Shared with the team via `.mcp.json`, checked into git |
-| user | `--scope user` | Available across all your projects |
-
-```bash
-claude mcp add --transport http github --scope project https://api.githubcopilot.com/mcp/
-```
-
-**Why it matters — cost, not just capability.** Each connected server's tool names and instructions load into *every* session's context, whether you use them that turn or not. Remove servers you no longer use to keep that space free. ([mcp-quickstart](https://code.claude.com/docs/en/mcp-quickstart))
-
-```bash
-# Wrong (Windows-specific gotcha) — npx doesn't run directly on Windows this way
-claude mcp add --transport stdio my-server -- npx -y @some/package
-# Fails with "Connection closed" on native Windows.
-
-# Right — wrap it
-claude mcp add --transport stdio my-server -- cmd /c npx -y @some/package
-```
-
-**Real scenario for your stack:** connecting a GitHub MCP server means you can ask "review PR #456 and suggest improvements" or "create an issue for the bug we just found" without leaving the terminal — useful for the SSO admin panel and Activity Tracker repos if they live on GitHub. ([MCP servers guide](https://www.builder.io/blog/claude-code-mcp-servers))
+- **`.claude/commands/` and `.claude/skills/` are functionally unified** (since v2.1.199) — both create a `/name` command; skills add support for supporting files (`references/` for background docs Claude reads but doesn't copy, `scripts/` for executables) and optional auto-invocation, so prefer skills for anything beyond a one-file procedure going forward.
+- **Skills are a trust boundary, not just a convenience.** A skill gives Claude new instructions and can direct tool use in ways that don't match its stated purpose — treat a downloaded community skill the way you'd treat an unreviewed dependency; only run skills you wrote or that come from Anthropic directly.
+- **Subagent context isolation is real, not just described in the docs.** A subagent receives its own system prompt, the delegation task message, CLAUDE.md files, a git status snapshot, and any preloaded skills — but *not* the parent session's conversation history or auto memory (unless `memory: project`/`user` is explicitly set on that subagent). This is why a subagent can't "remember" something you told the main session two turns ago; it was never in its context to begin with.
+- **Plugins bundle skills + subagents + hooks + MCP servers + commands into one versioned, installable unit** (`/plugin marketplace add <repo>`, `/plugin install <name>@<marketplace>`) — the mechanism for standardizing a whole team's setup with one command instead of everyone hand-copying `.claude/` folders. Each installed plugin adds to context load the same way a connected MCP server does, so install for an actual friction point, not speculatively.
 
 [⬆ back to top](#table-of-contents)
 
 ---
 
-## 10. Plugins & Marketplaces
+## 4. Part III — Automation & Headless
 
-**What it is.** A plugin bundles skills, subagents, slash commands, hooks, and MCP server definitions into one versioned, installable unit — install with `/plugin install <name>` and it works across terminal and VS Code alike. A marketplace hosts a collection of plugins (Anthropic's own, or a community/company one). ([plugins blog](https://claude.com/blog/claude-code-plugins))
+Covers: `-p`/`--print` scripting, structured output, exit codes, scheduled/background execution, CI integration.
+
+### Beginner
 
 ```bash
-/plugin marketplace add <marketplace-repo>
-/plugin install <plugin-name>@<marketplace-name>
+claude -p "explain what this error means" < build-error.txt
+claude -p --output-format json "list all REST endpoints in the API"
 ```
 
-**Why it matters for teams:** instead of every developer hand-rolling their own skills, hooks, and agents, a plugin captures the whole set once and every team member gets the identical setup with one command. If your team ever standardizes an AdonisJS+Nuxt workflow (migration conventions, PR review rules, deploy steps), a plugin is how you'd package and share it — rather than everyone copying `.claude/` folders around.
+`-p` runs once with no interactive prompts and exits — the foundation for every automation pattern below. Piped stdin is capped at 10 MB; for larger inputs, write to a file and reference the path instead.
 
-**A well-known example:** the community "Superpowers" plugin reframes Claude Code from a single agent into a small structured dev team — brainstorming, sub-agent-driven development, TDD enforcement, code review — and is now an official entry in Anthropic's marketplace. ([DataCamp best practices](https://www.datacamp.com/tutorial/claude-code-best-practices))
+### Working Knowledge
 
-**Common mistake:** installing plugins speculatively. Each one adds to your context load the same way an MCP server does. Start with the one plugin that solves an actual friction point, and expand from there rather than stacking many at once. ([Best Claude Code Plugins](https://buildtolaunch.substack.com/p/best-claude-code-plugins-tested-review))
+**Output formats:**
 
-[⬆ back to top](#table-of-contents)
-
----
-
-## 11. Automation & CI
-
-**What it is.** Claude Code follows the Unix philosophy — composable, pipeable, scriptable via `-p` (print/headless mode). No interactive session, no approval prompts (assuming your permissions are configured to allow what's needed). ([overview](https://code.claude.com/docs/en/overview))
+| Format | Use |
+| --- | --- |
+| `text` (default) | Plain text response |
+| `json` | Structured envelope with `result`, `session_id`, `total_cost_usd` |
+| `stream-json` | Newline-delimited streaming events, for real-time consumption |
 
 ```bash
-# Analyze a log stream for anomalies
-tail -200 app.log | claude -p "Slack me if you see any anomalies"
-
-# Automate translations as part of CI
-claude -p "translate new strings into French and raise a PR for review"
-
-# Bulk review of changed files
-git diff main --name-only | claude -p "review these changed files for security issues"
+session_id=$(claude -p "start review" --output-format json | jq -r '.session_id')
+claude -p "continue that review" --resume "$session_id"
 ```
 
-**Structured output for scripting** — `--output-format json` gives a parseable envelope (including cost and duration), useful for monitoring:
-```bash
-claude -p --output-format json "List all REST endpoints in the API"
-```
+**Being explicit about permissions in a script** — `-p` does not prompt, so an unconfigured permission mode either hangs or silently proceeds under whatever `defaultMode` happens to apply:
 
 ```bash
-# Wrong — assuming -p prompts for permission like an interactive session
+# Wrong — assuming -p prompts for permission like an interactive session would
 claude -p "deploy the app"
-# In CI, with no one watching, this either hangs or (worse) silently proceeds
-# under whatever defaultMode is set — check your permissions before scripting this.
+# In CI, with no one watching, this either hangs waiting on a prompt that never
+# comes, or silently proceeds under the ambient defaultMode.
 
 # Right — be explicit about what's safe to automate
 claude -p --permission-mode acceptEdits "run tests and fix any that fail"
-# Reserve bypassPermissions strictly for fully sandboxed CI runners (see §5).
+# Reserve bypassPermissions strictly for fully sandboxed CI runners.
 ```
 
-**CI integration:** GitHub Actions and GitLab CI/CD integrations let Claude Code automate PR review and issue triage directly in your pipeline. ([overview](https://code.claude.com/docs/en/overview))
+**Exit codes:** `0` success, `1` failure, `2` partial (e.g. cost ceiling hit), `130` interrupted (SIGINT), `143` terminated (SIGTERM) — check these in a CI step rather than assuming a non-zero exit always means "the model failed."
 
-**Scheduling recurring work:**
-- **Routines** run in the cloud (keep running even with your machine off) — create from the web, Desktop app, or `/schedule`.
-- **Desktop scheduled tasks** run on your machine, with direct local file/tool access.
-- **`/loop`** repeats a prompt within a single CLI session for quick polling.
+### Advanced
 
-[⬆ back to top](#table-of-contents)
+**`--bare` mode** skips loading hooks, skills, custom commands, subagents, plugins, MCP servers, auto memory, and CLAUDE.md — for reproducible CI runs across machines that shouldn't depend on a developer's local `.claude/` config. Requires `ANTHROPIC_API_KEY` (not subscription login); context can still be loaded explicitly via `--settings`, `--mcp-config`, `--agents`.
 
----
+**Scheduling recurring work** — three distinct mechanisms with different tradeoffs:
 
-## 12. Beyond the Terminal
+| Mechanism | Runs on | Needs session open | Survives restart |
+| --- | --- | --- | --- |
+| `/schedule` (cloud Routine) | Anthropic's cloud | No | Yes |
+| Desktop scheduled task | Your machine | No | Yes |
+| `/loop` | Your machine | Yes | No (session-scoped, ~7-day expiry) |
 
-Newer surfaces worth knowing exist, even if you mostly live in the terminal day-to-day:
+```bash
+/loop 5m check if deployment finished     # fixed interval
+/loop check CI and review comments         # Claude chooses the interval dynamically
+```
 
-| Surface | What it's for |
-|---|---|
-| **Desktop app** | Standalone app; review diffs visually, run multiple sessions side by side, schedule recurring tasks |
-| **Web** (claude.ai/code) | No local setup; kick off long tasks and check back later, or work on repos you don't have locally |
-| **Remote Control** | Continue a local session from your phone or another device |
-| **Dispatch** | Message a task from your phone, opens the Desktop session it creates |
-| **Teleport** (`claude --teleport`) | Pull a task started on web/mobile into your terminal |
-| **`/desktop`** | Hand off your current terminal session into the Desktop app for visual diff review |
-| **Slack integration** | Mention `@Claude` with a bug report, get a pull request back |
-| **Chrome integration** | Debug live web applications directly |
+**Background Bash gotcha:** background dev-server/watch-build processes started via Bash are terminated ~5 seconds after Claude's final result in a `-p` run — a script that expects a spawned server to keep running after the CLI exits will find it already dead.
 
-All connect to the same underlying engine — your CLAUDE.md, settings, and MCP servers apply regardless of which surface you're using. ([overview](https://code.claude.com/docs/en/overview))
+**CI integration:**
 
-**Why this matters for you specifically:** given you work across a Windows/Laragon local setup, the Desktop app's visual diff review plus `/desktop` handoff from a terminal session is worth trying once — it can make reviewing a large agent-generated diff meaningfully easier than scrolling through terminal output.
+```yaml
+- name: Claude review
+  run: claude -p "review this PR diff" --output-format json --allowedTools "Read,Grep"
+```
 
 [⬆ back to top](#table-of-contents)
 
 ---
 
-## 13. Real-World Patterns & Common Mistakes
+## 5. Part IV — Claude Agent SDK
 
-**The failure modes that actually bite people in autonomous operation** ([neurohive guide](https://neurohive.io/en/guides/claude-code-getting-started-guide/)):
-- An endless correction loop, where each fix introduces a new regression
-- References to file paths that don't exist in the repo
-- Breaking changes to shared modules the current task didn't need to touch
-- Test regressions in areas unrelated to the original task
+### Beginner
 
-**Mitigations that map directly to sections above:**
-- Work in a separate git branch; make checkpoint commits before large tasks (Claude Code also auto-snapshots before changes — press Escape twice to rewind when something breaks)
-- Don't run fully autonomous (`bypassPermissions`) on anything with real credentials — isolate in a container/VM/CI runner instead (§5)
-- Use Plan mode for anything you're not confident about, so you review before anything executes (§4)
-- Push non-negotiables into hooks rather than CLAUDE.md wording (§8)
+**What it is.** The Agent SDK is Claude Code's own harness — the agentic loop, built-in tools, context management, and permission system — packaged as a library you embed in your own application, rather than run as a terminal CLI. You host and deploy it yourself; Anthropic does not. Packages: `@anthropic-ai/claude-agent-sdk` (npm), `claude-agent-sdk` (pip). ([Agent SDK overview](https://code.claude.com/docs/en/agent-sdk/overview))
 
-**Common mistake — an over-stuffed CLAUDE.md.** Treating it like project documentation rather than a set of things Claude genuinely can't infer bloats every session's starting context and, per the docs, can *reduce* instruction-following consistency rather than improve it. Prefer trimming it toward pitfalls, rationale, and conventions that differ from tool defaults; let `/doctor` help. (§3)
+**Hello world:**
 
-**Common mistake — reaching for a subagent or plugin for everything.** Both have real context overhead. Reserve subagents for genuinely token-heavy or parallelizable work, and plugins for repeated friction, not speculative "might need this later" installs. (§6, §10)
+**Python:**
 
-**Common mistake — confusing "wrote it in CLAUDE.md" with "enforced."** If a mistake keeps recurring despite being in CLAUDE.md, that's the signal to move it to a hook, not to write a stronger sentence. (§8)
+```python
+import asyncio
+from claude_agent_sdk import query, ClaudeAgentOptions
+
+async def main():
+    async for message in query(
+        prompt="Review utils.py for bugs and fix them.",
+        options=ClaudeAgentOptions(
+            allowed_tools=["Read", "Edit", "Glob"],
+            permission_mode="acceptEdits",
+        ),
+    ):
+        print(message)
+
+asyncio.run(main())
+```
+
+**TypeScript:**
+
+```typescript
+import { query } from "@anthropic-ai/claude-agent-sdk";
+
+for await (const message of query({
+  prompt: "Review utils.py for bugs and fix them.",
+  options: {
+    allowedTools: ["Read", "Edit", "Glob"],
+    permissionMode: "acceptEdits",
+  },
+})) {
+  console.log(message);
+}
+```
+
+```bash
+# Wrong — expecting the SDK to include the Claude Code binary on every platform silently
+pip install claude-agent-sdk
+# On some platforms (e.g. ARM64 Windows) this pulls a source distribution with no
+# bundled binary — the agent fails at runtime with no clear reason why.
+
+# Right — install Claude Code natively as a fallback the SDK can find on PATH
+npm install -g @anthropic-ai/claude-code
+# TypeScript: pass pathToClaudeCodeExecutable in ClaudeAgentOptions if autodetection fails
+```
+
+### Working Knowledge
+
+**Custom tools** become an in-process MCP server your agent can call — the same MCP concept from Part II, just without a separate process:
+
+**Python:**
+
+```python
+from claude_agent_sdk import tool, create_sdk_mcp_server, ClaudeAgentOptions
+
+@tool("add", "Add two numbers", {"a": float, "b": float})
+async def add(args):
+    return {"content": [{"type": "text", "text": f"Sum: {args['a'] + args['b']}"}]}
+
+calculator = create_sdk_mcp_server(name="calculator", tools=[add])
+options = ClaudeAgentOptions(
+    mcp_servers={"calc": calculator},
+    allowed_tools=["mcp__calc__add"],  # pattern: mcp__<server>__<tool>
+)
+```
+
+**TypeScript:**
+
+```typescript
+import { tool, createSdkMcpServer } from "@anthropic-ai/claude-agent-sdk";
+import { z } from "zod";
+
+const addTool = tool(
+  "add", "Add two numbers", { a: z.number(), b: z.number() },
+  async ({ a, b }) => ({ content: [{ type: "text", text: `Sum: ${a + b}` }] })
+);
+const calculator = createSdkMcpServer({ name: "calculator", tools: [addTool] });
+// options.mcpServers = { calc: calculator }, allowedTools: ["mcp__calc__add"]
+```
+
+A silently-denied tool call almost always means the name in `allowed_tools` doesn't exactly match `mcp__<server>__<tool>` — check that before assuming the tool implementation is broken.
+
+**Permission callbacks** are the code-level equivalent of a `PreToolUse` hook — same decision point in the loop, expressed as a function instead of a shell command:
+
+```python
+async def custom_permission(tool_name, input_data, context):
+    if tool_name == "Write" and "/system/" in input_data.get("file_path", ""):
+        return PermissionResultDeny(message="System writes blocked")
+    return PermissionResultAllow()
+
+options = ClaudeAgentOptions(can_use_tool=custom_permission)
+```
+
+**Real scenario.** You're building an internal Slack bot that triages bug reports: reads the relevant repo, reproduces the issue, opens a draft PR — but must never touch `/infra/` and must never run `terraform apply`. You'd set `allowed_tools` to a narrow set (Read, Grep, Edit, Bash for test commands only) and add a `can_use_tool` callback that hard-denies any path under `/infra/` and any Bash command containing `terraform` — the same layered defense as Part I/II's permissions + hooks, expressed as SDK config instead of `.claude/settings.json`.
+
+### Advanced
+
+**SDK vs. Tool Runner vs. Managed Agents — three distinct products, easy to conflate:**
+
+| Product | Built-in tools? | Who hosts it? | Use when |
+| --- | --- | --- | --- |
+| **Agent SDK** | Yes — Read/Edit/Bash/etc. bundled | You | You want Claude-Code-equivalent autonomy (file edits, shell commands) inside your own app |
+| **Tool Runner** (`client.beta.messages.tool_runner`, in the API SDKs) | No — only tools *you* define | You | You want a managed agentic loop (retries, approval hooks) with full control over what tools exist — no filesystem/shell access implied |
+| **Managed Agents** | Defined per-agent | Anthropic (hosted sandbox) | You don't want to run any infrastructure yourself |
+
+If you only need "call my own functions in a loop," Tool Runner is lighter weight than pulling in the full Agent SDK. If you need filesystem/shell autonomy like Claude Code itself has, the Agent SDK is the right layer. ([Tool Runner](https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-runner))
 
 [⬆ back to top](#table-of-contents)
 
 ---
 
-## 14. Cheat Sheets
+## 6. Part V — Claude API Fundamentals
+
+### Beginner
+
+**What it is.** The Messages API is the raw substrate everything above is built on — Claude Code, the Agent SDK, and Tool Runner all ultimately send Messages API requests. Understanding it directly matters once you're debugging *why* an agent behaved a certain way, tuning cost, or building something the higher-level tools don't cover. ([Messages API](https://platform.claude.com/docs/en/api/messages))
+
+**Python:**
+
+```python
+import anthropic
+
+client = anthropic.Anthropic()  # reads ANTHROPIC_API_KEY from env
+message = client.messages.create(
+    model="claude-sonnet-5",
+    max_tokens=1024,
+    system="You are a senior Python developer. Follow PEP 8.",
+    messages=[{"role": "user", "content": "Write a hello world function"}],
+)
+print(message.content[0].text)
+```
+
+**TypeScript:**
+
+```typescript
+import Anthropic from "@anthropic-ai/sdk";
+
+const client = new Anthropic();  // reads ANTHROPIC_API_KEY from env
+const message = await client.messages.create({
+  model: "claude-sonnet-5",
+  max_tokens: 1024,
+  system: "You are a senior Python developer. Follow PEP 8.",
+  messages: [{ role: "user", content: "Write a hello world function" }],
+});
+console.log(message.content[0].text);
+```
+
+```bash
+# Wrong — putting the system prompt inside the messages array
+messages=[{"role": "system", "content": "..."}, {"role": "user", "content": "..."}]
+# The Messages API has no "system" role inside messages — this errors or is
+# ignored depending on SDK version.
+
+# Right — system is always its own top-level parameter, never a message role
+system="..."
+messages=[{"role": "user", "content": "..."}]
+```
+
+`max_tokens` is required and is a hard ceiling on the *response* — it does not affect input. Current model IDs: `claude-opus-5`, `claude-sonnet-5`, `claude-haiku-4-5-20251001`, `claude-fable-5` — always confirm against the live [models overview](https://platform.claude.com/docs/en/about-claude/models/overview) before hardcoding one, since IDs and availability change.
+
+### Working Knowledge
+
+**Tool use (function calling)** is the mechanism the Agent SDK's built-in tools and every MCP tool call are built on underneath:
+
+```python
+tools = [{
+    "name": "get_weather",
+    "description": "Get current weather for a location",
+    "input_schema": {
+        "type": "object",
+        "properties": {"location": {"type": "string", "description": "City, State"}},
+        "required": ["location"],
+    },
+}]
+
+response = client.messages.create(
+    model="claude-sonnet-5", max_tokens=1024, tools=tools,
+    messages=[{"role": "user", "content": "What's the weather in SF?"}],
+)
+
+if response.stop_reason == "tool_use":
+    for block in response.content:
+        if block.type == "tool_use":
+            result = run_my_weather_lookup(block.input["location"])
+            # Round-trip: echo the assistant turn back, then the result,
+            # tagged with the SAME tool_use_id Claude generated
+            messages = [
+                {"role": "user", "content": "What's the weather in SF?"},
+                {"role": "assistant", "content": response.content},
+                {"role": "user", "content": [
+                    {"type": "tool_result", "tool_use_id": block.id, "content": result}
+                ]},
+            ]
+```
+
+```bash
+# Wrong — generating your own id for the tool_result, or reusing a stale one
+{"type": "tool_result", "tool_use_id": "my-own-id-123", "content": result}
+# Claude can't match this back to the tool_use block it issued — the turn breaks.
+
+# Right — always pass back the exact id from the tool_use block you're responding to
+{"type": "tool_result", "tool_use_id": block.id, "content": result}
+```
+
+`tool_choice` controls whether Claude *must* call a tool: `{"type": "auto"}` (default), `{"type": "any"}` (must call some tool), `{"type": "tool", "name": "..."}` (force a specific one), `{"type": "none"}`. Claude can request multiple tools in one turn — check for more than one `tool_use` block in `response.content` rather than assuming exactly one. ([Tool use guide](https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview))
+
+**Streaming**, for anything user-facing:
+
+```python
+with client.messages.stream(
+    model="claude-sonnet-5", max_tokens=1024,
+    messages=[{"role": "user", "content": "Hello"}],
+) as stream:
+    for text in stream.text_stream:
+        print(text, end="", flush=True)
+```
+
+```typescript
+await client.messages.stream({
+  model: "claude-sonnet-5", max_tokens: 1024,
+  messages: [{ role: "user", content: "Hello" }],
+}).on("text", (text) => process.stdout.write(text));
+```
+
+Final token usage arrives only in the closing `message_delta` event — you can't know the exact cost of a streamed request until it finishes. ([Streaming](https://platform.claude.com/docs/en/build-with-claude/streaming))
+
+### Advanced
+
+**Prompt caching** is the API-level mechanism behind why a long, stable CLAUDE.md or system prompt doesn't cost full price on every turn — mark a stable content block with `cache_control`, and repeated requests that reuse it pay a much smaller "cache read" rate instead of full input price:
+
+```python
+response = client.messages.create(
+    model="claude-sonnet-5",
+    max_tokens=1024,
+    system=[{
+        "type": "text",
+        "text": "<your long, stable system prompt / doc corpus>",
+        "cache_control": {"type": "ephemeral"},  # default TTL; a longer TTL is also available
+    }],
+    messages=[{"role": "user", "content": "..."}],
+)
+print(response.usage.cache_creation_input_tokens, response.usage.cache_read_input_tokens)
+```
+
+There's a minimum token count below which a block won't actually get cached (it varies by model — check the [prompt caching docs](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) for the current thresholds rather than assuming a number here). Put cache breakpoints on genuinely stable content — never on something that changes every request (a timestamp, per-user data), or you pay the cache-write premium every call and never see a hit.
+
+**Token counting** (`client.messages.count_tokens(...)`) is free to call and estimates a request's input cost *before* sending it — worth using in a loop that processes many documents, to catch an oversized prompt before you pay for it.
+
+**Model selection** — rough rule of thumb for agentic work: start with a mid-tier model (Sonnet) for everyday agentic coding, iterate down to a cheaper/faster one (Haiku) once prompts and evals are solid, or up to a higher-reasoning one (Opus/Fable) for genuinely hard, long-horizon tasks. Always check the live [pricing page](https://platform.claude.com/docs/en/about-claude/pricing) and [choosing a model guide](https://platform.claude.com/docs/en/about-claude/models/choosing-a-model) before making a cost-sensitive decision — prices and per-model discounts change.
+
+**Real scenario.** An agent you built with the Agent SDK is processing hundreds of support tickets a day, each time re-sending your entire 8,000-token style guide as part of the system prompt. Without caching, that's 8,000 tokens of full-price input on every ticket. Marking the style guide block with `cache_control` means only the first ticket pays full price — every subsequent ticket within the cache TTL reads it at the much cheaper cache-read rate, usually the single biggest lever for cutting cost on a high-volume agent like this.
+
+[⬆ back to top](#table-of-contents)
+
+---
+
+## 7. Cheat Sheets
 
 ### CLI essentials
+
 | Command | Purpose |
-|---|---|
+| --- | --- |
 | `claude` | Start interactive session |
-| `claude "task"` | Interactive session with an initial prompt |
 | `claude -p "task"` | Headless: run once, print, exit |
 | `claude -c` | Continue most recent session, this directory |
 | `claude -r "name" "task"` | Resume a named session |
@@ -602,17 +726,20 @@ All connect to the same underlying engine — your CLAUDE.md, settings, and MCP 
 | `claude update` | Update the CLI |
 
 ### Permission rule syntax
+
 | Pattern | Matches |
-|---|---|
+| --- | --- |
 | `Bash` / `Bash(*)` | All Bash commands |
 | `Bash(npm run:*)` | Any `npm run ...` variant |
 | `Read(./.env)` | That exact file, for Read (and a few related built-ins) |
 | `Read(./**)` | Everything under the project root |
+
 Evaluation order: **deny → ask → allow → defaultMode fallback.**
 
 ### Hook events (most common)
+
 | Event | Fires | Can block? |
-|---|---|---|
+| --- | --- | --- |
 | `PreToolUse` | Before any tool executes | Yes (`exit 2`) |
 | `PostToolUse` | After a tool succeeds | No (side effects only) |
 | `Stop` | Claude is about to finish responding | Yes |
@@ -620,33 +747,52 @@ Evaluation order: **deny → ask → allow → defaultMode fallback.**
 | `SessionStart` | New session begins | — |
 
 ### Memory scopes (broadest → narrowest)
+
 Enterprise policy → Project (`./CLAUDE.md`) → User (`~/.claude/CLAUDE.md`) → Project-local (`./CLAUDE.local.md`)
+
+### SDK / API layer decision
+
+| Need | Reach for |
+| --- | --- |
+| Interactive daily-driver terminal use | Claude Code (Parts I–III) |
+| Embed Claude-Code-equivalent autonomy in your own app | Agent SDK (Part IV) |
+| Managed loop over tools *you* define, no filesystem autonomy | Tool Runner |
+| Zero infra to run yourself | Managed Agents |
+| Full manual control (custom loop, custom caching strategy) | Raw Messages API (Part V) |
 
 [⬆ back to top](#table-of-contents)
 
 ---
 
-## 15. Suggested Learning Order
+## 8. Suggested Learning Order
 
-1. **Install and run one real task** (§2, §4) — pick a small, low-risk bug fix in a project you know well. Get comfortable reviewing a Claude-generated diff.
-2. **Write a minimal CLAUDE.md** (§3) — just the pitfalls and conventions your project needs, under 50 lines to start.
-3. **Configure permissions deliberately** (§5) — don't default to clicking "allow" on everything; set up `allow`/`deny` for your common safe commands so you stop rubber-stamping `git status`.
-4. **Try one hook** (§8) — start with a PostToolUse formatter hook; it's low-risk and the feedback is immediate.
-5. **Delegate one research task to a subagent** (§6) — notice how it keeps your main context clean.
-6. **Write one custom skill** (§7) — turn a checklist you paste repeatedly into a `/`-command.
-7. **Connect one MCP server** (§9) — GitHub is a good first choice if your repos live there.
-8. **Automate one recurring task** (§11) — a `-p` script or a scheduled routine for something you do weekly.
-9. Explore plugins (§10) and the non-terminal surfaces (§12) once the fundamentals feel automatic.
+1. **Install and run one real task** (§2 Beginner/Working Knowledge) — a small, low-risk bug fix in a project you know well. Get comfortable reviewing a Claude-generated diff.
+2. **Write a minimal CLAUDE.md** (§3 Beginner) — just the pitfalls and conventions your project needs, under 50 lines to start.
+3. **Configure permissions deliberately** (§2 Advanced) — set up `allow`/`deny` for your common safe commands so you stop rubber-stamping `git status`.
+4. **Try one hook** (§3 Working Knowledge/Advanced) — start with a `PostToolUse` formatter hook; low-risk, immediate feedback.
+5. **Delegate one research task to a subagent** (§2 Working Knowledge, §3 Mastery) — notice how it keeps your main context clean.
+6. **Write one custom skill** (§3 Beginner/Advanced) — turn a checklist you paste repeatedly into a `/`-command.
+7. **Connect one MCP server** (§3 Working Knowledge) — GitHub is a good first choice if your repos live there.
+8. **Automate one recurring task** (§4) — a `-p` script or a scheduled routine for something you do weekly.
+9. **Read the Claude API fundamentals** (§6) — tool use and prompt caching in particular, since they're what everything above is quietly doing on your behalf.
+10. **Build one throwaway agent on the Agent SDK** (§5) — a minimal script with 2–3 allowed tools, on a low-stakes local task. The goal is feeling the same permission-mode/tool-allowlist concepts from code, not shipping something real yet.
 
-## 16. Quick Self-Check
+[⬆ back to top](#table-of-contents)
+
+---
+
+## 9. Quick Self-Check
 
 - What's the difference between what CLAUDE.md does and what auto memory does — and who writes each?
 - Why can't a CLAUDE.md instruction alone guarantee Claude never touches a file — what mechanism actually guarantees that?
 - In what order are permission rules evaluated, and which one wins on a conflict?
-- When would you reach for a subagent instead of just asking directly in the main session?
-- What's the actual trigger mechanism for a skill — and what's the most common reason one fails to fire?
+- Why does project-level `.claude/settings.json` setting `defaultMode: "bypassPermissions"` get silently ignored?
+- When would you reach for a subagent instead of just asking directly in the main session, and what does it *not* inherit from the parent session?
+- What's the actual trigger mechanism for a skill, and what's the most common reason one fails to fire?
 - Why does connecting an MCP server have a cost even in a turn where you don't use it?
-- Name two mitigations for the "endless correction loop" failure mode in autonomous operation.
-- What's the practical difference between `claude` and `claude -p` for a CI script?
+- What's the practical difference between `claude` and `claude -p` for a CI script, and what's the exit-code gotcha to check for?
+- What's the actual difference between the Claude Agent SDK, Tool Runner, and Managed Agents — and which one has built-in filesystem/shell tools?
+- In a `tool_use` / `tool_result` round trip, what field has to match exactly, and what breaks if it doesn't?
+- Why would marking a `cache_control` breakpoint on a timestamp-containing block actively cost you money instead of saving it?
 
 [⬆ back to top](#table-of-contents)
