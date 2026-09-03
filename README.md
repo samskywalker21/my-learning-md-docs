@@ -21,6 +21,7 @@ One folder per topic, one or more markdown docs inside:
 | Claude Code / Agent SDK / API | [`claude/claude-code-mastery-guide.md`](./claude/claude-code-mastery-guide.md) | September 3, 2026 |
 | Docker | [`docker/docker-mastery-guide.md`](./docker/docker-mastery-guide.md) | — |
 | JavaScript | [`javascript/javascript-mastery-guide.md`](./javascript/javascript-mastery-guide.md) | September 3, 2026 |
+| Postgres SQL | [`postgres/postgres-mastery-guide.md`](./postgres/postgres-mastery-guide.md) | September 3, 2026 |
 
 *(Add a row whenever a new doc is added. Status: 📝 in progress · ✅ done · 🔄 needs update — or whatever markers are useful.)*
 
