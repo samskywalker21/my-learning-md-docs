@@ -24,7 +24,11 @@ One folder per topic, one or more markdown docs inside:
 | JavaScript | [`javascript/javascript-mastery-guide.md`](./javascript/javascript-mastery-guide.md) | September 3, 2026 |
 | Node.js | [`nodejs/nodejs-mastery-guide.md`](./nodejs/nodejs-mastery-guide.md) | September 3, 2026 |
 | Postgres SQL | [`postgres/postgres-mastery-guide.md`](./postgres/postgres-mastery-guide.md) | September 3, 2026 |
+| Tailwind CSS | [`tailwindcss/tailwindcss-mastery-guide.md`](./tailwindcss/tailwindcss-mastery-guide.md) | September 3, 2026 |
+| Tailwind CSS — Responsive Layouts | [`tailwindcss/tailwindcss-responsive-layouts.md`](./tailwindcss/tailwindcss-responsive-layouts.md) | September 3, 2026 |
+| Tailwind CSS — Animations | [`tailwindcss/tailwindcss-animations.md`](./tailwindcss/tailwindcss-animations.md) | September 3, 2026 |
 | Vite | [`vite/vite-mastery-guide.md`](./vite/vite-mastery-guide.md) | September 3, 2026 |
+| Vue 3 | [`vuejs/vue-mastery-guide.md`](./vuejs/vue-mastery-guide.md) | September 3, 2026 |
 
 *(Add a row whenever a new doc is added. Status: 📝 in progress · ✅ done · 🔄 needs update — or whatever markers are useful.)*
 
