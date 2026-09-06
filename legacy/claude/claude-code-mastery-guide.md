@@ -1,6 +1,10 @@
 # Mastering Claude Code, the Agent SDK & the Claude API — A Reference Guide
 
-> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+> ⤴️ **Superseded for the CLI** by [`claude-code/`](../../claude-code/claude-code-mastery-guide.md) — an overview plus six focused sub-docs written against Claude Code v2.1.263 (September 6, 2026) and the current `prompt.md` template.
+>
+> **Do not use this doc for CLI behaviour.** Its Parts I–III are materially out of date: they predate auto mode becoming the built-in starting permission mode on Pro/Max/Team, auto memory (`MEMORY.md`), `.claude/rules/` and path-scoped rules, MCP tool search, and the migration from `.claude/commands/` to skills. See [§6 of the new overview](../../claude-code/claude-code-mastery-guide.md#6-what-recent-releases-changed-under-you) for the full list of what changed.
+>
+> **Still the only coverage in this repo of** the Claude Agent SDK (Part IV) and Claude API fundamentals (Part V), which the new set deliberately excludes. Those two Parts are the reason to open this file — and they should be re-verified against [code.claude.com/docs/en/agent-sdk/overview](https://code.claude.com/docs/en/agent-sdk/overview) and [platform.claude.com/docs](https://platform.claude.com/docs) before you rely on them.
 
 ## About This Document
 

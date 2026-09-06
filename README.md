@@ -59,6 +59,13 @@ Docs written against the current [`prompt.md`](./prompt.md) template.
 | Bun — Servers, Networking & Data (Parts 9–10) | [`bun/bun-servers-networking-data.md`](./bun/bun-servers-networking-data.md) | September 6, 2026 | ✅ done |
 | Bun — Testing & Bundling (Parts 11–12) | [`bun/bun-testing-bundling.md`](./bun/bun-testing-bundling.md) | September 6, 2026 | ✅ done |
 | Bun — Node Compat & Internals (Part 13) | [`bun/bun-node-compat-internals.md`](./bun/bun-node-compat-internals.md) | September 6, 2026 | ✅ done |
+| Claude Code — overview | [`claude-code/claude-code-mastery-guide.md`](./claude-code/claude-code-mastery-guide.md) | September 6, 2026 | ✅ done |
+| Claude Code — Daily Driver (Parts 1–3) | [`claude-code/claude-code-daily-driver.md`](./claude-code/claude-code-daily-driver.md) | September 6, 2026 | ✅ done |
+| Claude Code — Context & Memory (Parts 4–5) | [`claude-code/claude-code-context-memory.md`](./claude-code/claude-code-context-memory.md) | September 6, 2026 | ✅ done |
+| Claude Code — Config & Settings (Parts 6–7) | [`claude-code/claude-code-config-settings.md`](./claude-code/claude-code-config-settings.md) | September 6, 2026 | ✅ done |
+| Claude Code — Permissions & Security (Parts 8–9) | [`claude-code/claude-code-permissions-security.md`](./claude-code/claude-code-permissions-security.md) | September 6, 2026 | ✅ done |
+| Claude Code — Extensibility (Parts 10–12) | [`claude-code/claude-code-extensibility.md`](./claude-code/claude-code-extensibility.md) | September 6, 2026 | ✅ done |
+| Claude Code — Automation & Agents (Parts 13–14) | [`claude-code/claude-code-automation-agents.md`](./claude-code/claude-code-automation-agents.md) | September 6, 2026 | ✅ done |
 
 ## 🗂️ Legacy Index
 
@@ -67,7 +74,7 @@ Docs pending a re-write against the current template.
 | Topic | Doc | Last Updated | Status |
 |---|---|---|---|
 | Bun | [`legacy/bunjs/bunjs-mastery-guide.md`](./legacy/bunjs/bunjs-mastery-guide.md) | September 3, 2026 | ⤴️ superseded by [`bun/`](./bun/bun-mastery-guide.md) |
-| Claude Code / Agent SDK / API | [`legacy/claude/claude-code-mastery-guide.md`](./legacy/claude/claude-code-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
+| Claude Code / Agent SDK / API | [`legacy/claude/claude-code-mastery-guide.md`](./legacy/claude/claude-code-mastery-guide.md) | September 3, 2026 | ⤴️ superseded by [`claude-code/`](./claude-code/claude-code-mastery-guide.md) |
 | Docker | [`legacy/docker/docker-mastery-guide.md`](./legacy/docker/docker-mastery-guide.md) | — | 🔄 needs re-write |
 | JavaScript | [`legacy/javascript/javascript-mastery-guide.md`](./legacy/javascript/javascript-mastery-guide.md) | September 6, 2026 | 🔄 needs re-write |
 | JavaScript — for React | [`legacy/javascript/javascript-for-react-mastery.md`](./legacy/javascript/javascript-for-react-mastery.md) | September 6, 2026 | 🔄 needs re-write |
@@ -92,6 +99,8 @@ The three legacy JavaScript docs are **superseded by the `javascript/` set above
 The two legacy TypeScript docs (`legacy/typescript/typescript-config-mastery.md`, `legacy/typescript/typescript-for-fullstack-mastery.md`) are **superseded by the `typescript/` set above**, which is written against TypeScript 7 — the legacy pair predates the TypeScript 6.0/7.0 default and flag changes of 2026 and should not be used for config advice.
 
 The legacy Bun guide (`legacy/bunjs/bunjs-mastery-guide.md`) is **superseded by the `bun/` set above**. It was already written against Bun 1.4 and is not materially wrong; the new set replaces it because it is one 594-line doc rather than an overview plus focused sub-docs, and it assumes no Node background where the new set adds an explicit runtime primer. Kept for reference, not for extending.
+
+The legacy Claude Code guide (`legacy/claude/claude-code-mastery-guide.md`) is **superseded by the `claude-code/` set above** for everything about the CLI. Much of its version-specific material is now wrong — it predates auto mode becoming the default starting permission mode, auto memory, `.claude/rules/`, MCP tool search, and the skills-over-`.claude/commands/` migration. It is kept only because it also covers the **Claude Agent SDK and Claude API**, which the new set deliberately excludes; treat those two Parts as the reason to open it, and nothing else.
 
 ## 🧭 Doc Conventions
 
