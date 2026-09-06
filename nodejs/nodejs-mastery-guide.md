@@ -1,5 +1,7 @@
 # Mastering Node.js — A Hands-On Reference Guide
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 ## About This Document
 
 - **Framing:** Curiosity-driven. No upcoming task is driving this — the goal is durable, hands-on understanding of the Node.js runtime itself. Theory ("why it's built this way") only shows up where it's needed to explain a mechanism (the event loop, module resolution, backpressure), not as standalone history.

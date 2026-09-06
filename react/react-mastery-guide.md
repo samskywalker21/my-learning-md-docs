@@ -1,5 +1,7 @@
 # React Mastery Guide
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 ## About This Document
 
 - **Framing:** **Curiosity-driven** — no deadline, no shipping task. Structured as a *guided, hands-on tutorial*: a sequence of runnable examples and exercises that build technical fluency. Theory ("why is it designed this way") appears only at the exact points where it is needed to explain a mechanism — there is deliberately **no history/evolution section**.

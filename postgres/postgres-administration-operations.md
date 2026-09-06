@@ -1,5 +1,7 @@
 # Postgres Administration & Operations
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 Part of the [Postgres SQL Mastery Guide](./postgres-mastery-guide.md).
 
 This file treats Postgres as a **service you operate**, not just a place to send queries. It covers who can touch your data, how you get it back after something goes wrong, how a database stays available across machines, which server knobs are worth knowing about, and how you'd notice trouble before a user does.

@@ -1,5 +1,7 @@
 # Monorepo Mastery Guide (Node.js / Bun)
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 ## Table of Contents
 
 - [About This Document](#about-this-document)

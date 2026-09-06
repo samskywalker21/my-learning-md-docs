@@ -1,5 +1,7 @@
 # Postgres Transactions & Concurrency
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 Part of the [Postgres SQL Mastery Guide](./postgres-mastery-guide.md).
 
 This is where Postgres mastery really lives: how it lets dozens of clients read and write the same rows at once without them stepping on each other, and without readers blocking writers. Everything here is meant to be run — ideally with **two psql sessions open side by side** (call them Session A and Session B) so you can watch the behavior happen instead of taking it on faith.

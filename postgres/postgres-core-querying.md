@@ -1,5 +1,7 @@
 # Postgres Core Querying — SELECT, Joins, Subqueries, CTEs & Window Functions
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 Part of the [Postgres SQL Mastery Guide](./postgres-mastery-guide.md).
 
 This file is the heart of the series: everything about *reading* data from Postgres — from a plain `SELECT` up through recursive CTEs and window function frame clauses. It does not cover `EXPLAIN`, the query planner, or indexing — see [Query Engine & Indexing](./postgres-query-engine-indexing.md) for why a particular plan gets chosen, or why a query that reads fine here runs slowly at scale.

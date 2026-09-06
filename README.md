@@ -15,24 +15,26 @@ One folder per topic, one or more markdown docs inside:
 
 ## 📖 Index
 
-| Topic | Doc | Last Updated |
-|---|---|---|
-| Bun | [`bunjs/bunjs-mastery-guide.md`](./bunjs/bunjs-mastery-guide.md) | September 3, 2026 |
-| Claude Code / Agent SDK / API | [`claude/claude-code-mastery-guide.md`](./claude/claude-code-mastery-guide.md) | September 3, 2026 |
-| Docker | [`docker/docker-mastery-guide.md`](./docker/docker-mastery-guide.md) | — |
-| JavaScript | [`javascript/javascript-mastery-guide.md`](./javascript/javascript-mastery-guide.md) | September 6, 2026 |
-| JavaScript — for React | [`javascript/javascript-for-react-mastery.md`](./javascript/javascript-for-react-mastery.md) | September 6, 2026 |
-| JavaScript — for TypeScript | [`javascript/javascript-for-typescript-mastery.md`](./javascript/javascript-for-typescript-mastery.md) | September 6, 2026 |
-| Node.js | [`nodejs/nodejs-mastery-guide.md`](./nodejs/nodejs-mastery-guide.md) | September 3, 2026 |
-| Postgres SQL | [`postgres/postgres-mastery-guide.md`](./postgres/postgres-mastery-guide.md) | September 3, 2026 |
-| React | [`react/react-mastery-guide.md`](./react/react-mastery-guide.md) | September 6, 2026 |
-| Tailwind CSS | [`tailwindcss/tailwindcss-mastery-guide.md`](./tailwindcss/tailwindcss-mastery-guide.md) | September 3, 2026 |
-| Tailwind CSS — Responsive Layouts | [`tailwindcss/tailwindcss-responsive-layouts.md`](./tailwindcss/tailwindcss-responsive-layouts.md) | September 3, 2026 |
-| Tailwind CSS — Animations | [`tailwindcss/tailwindcss-animations.md`](./tailwindcss/tailwindcss-animations.md) | September 3, 2026 |
-| Vite | [`vite/vite-mastery-guide.md`](./vite/vite-mastery-guide.md) | September 3, 2026 |
-| Vue 3 | [`vuejs/vue-mastery-guide.md`](./vuejs/vue-mastery-guide.md) | September 6, 2026 |
+| Topic | Doc | Last Updated | Status |
+|---|---|---|---|
+| Bun | [`bunjs/bunjs-mastery-guide.md`](./bunjs/bunjs-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
+| Claude Code / Agent SDK / API | [`claude/claude-code-mastery-guide.md`](./claude/claude-code-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
+| Docker | [`docker/docker-mastery-guide.md`](./docker/docker-mastery-guide.md) | — | 🔄 needs re-write |
+| JavaScript | [`javascript/javascript-mastery-guide.md`](./javascript/javascript-mastery-guide.md) | September 6, 2026 | 🔄 needs re-write |
+| JavaScript — for React | [`javascript/javascript-for-react-mastery.md`](./javascript/javascript-for-react-mastery.md) | September 6, 2026 | 🔄 needs re-write |
+| JavaScript — for TypeScript | [`javascript/javascript-for-typescript-mastery.md`](./javascript/javascript-for-typescript-mastery.md) | September 6, 2026 | 🔄 needs re-write |
+| Node.js | [`nodejs/nodejs-mastery-guide.md`](./nodejs/nodejs-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
+| Postgres SQL | [`postgres/postgres-mastery-guide.md`](./postgres/postgres-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
+| React | [`react/react-mastery-guide.md`](./react/react-mastery-guide.md) | September 6, 2026 | 🔄 needs re-write |
+| Tailwind CSS | [`tailwindcss/tailwindcss-mastery-guide.md`](./tailwindcss/tailwindcss-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
+| Tailwind CSS — Responsive Layouts | [`tailwindcss/tailwindcss-responsive-layouts.md`](./tailwindcss/tailwindcss-responsive-layouts.md) | September 3, 2026 | 🔄 needs re-write |
+| Tailwind CSS — Animations | [`tailwindcss/tailwindcss-animations.md`](./tailwindcss/tailwindcss-animations.md) | September 3, 2026 | 🔄 needs re-write |
+| Vite | [`vite/vite-mastery-guide.md`](./vite/vite-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
+| Vue 3 | [`vuejs/vue-mastery-guide.md`](./vuejs/vue-mastery-guide.md) | September 6, 2026 | 🔄 needs re-write |
 
-*(Add a row whenever a new doc is added. Status: 📝 in progress · ✅ done · 🔄 needs update — or whatever markers are useful.)*
+*(Add a row whenever a new doc is added. Status: 📝 in progress · ✅ done · 🔄 needs re-write — or whatever markers are useful.)*
+
+**Note:** All guides above (plus several not yet indexed here — MySQL, TypeScript, CI/CD, and Monorepo docs) are marked 🔄 **needs re-write** as of September 6, 2026: they predate the current [`prompt.md`](./prompt.md) template and will be regenerated/updated against it going forward.
 
 ## 🧭 Doc Conventions
 

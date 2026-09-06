@@ -1,5 +1,7 @@
 # MySQL Administration & Operations
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 Part of the [MySQL Mastery Guide](./mysql-mastery-guide.md). Beginner → Advanced — Mastery-level ops internals (custom replication topologies, deep buffer-pool/redo-log internals) are their own specialty and out of scope for a SQL-focused series; Mastery-level asides are folded into brief "goes deeper" notes.
 
 ## Table of Contents

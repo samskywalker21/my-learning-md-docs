@@ -1,5 +1,7 @@
 # Modern Responsive Layouts with Tailwind CSS — A Goal-Driven Guide
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 ## About This Document
 
 - **Framing:** Goal-driven. Written to support building modern, responsive layouts for a real web application — depth and examples are prioritized toward the utilities, patterns, and config you'll actually touch while laying out app UI (dashboards, nav shells, cards, forms, tables), not toward exhaustive coverage of Tailwind as a whole.

@@ -1,5 +1,7 @@
 # Building Animations with Tailwind CSS — A Goal-Driven Guide
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 ## About This Document
 
 - **Framing:** Goal-driven. Written to support building real UI animations with Tailwind — depth and examples are prioritized toward the utilities, config syntax, and plugins you'll actually touch (transitions, keyframes, enter/exit states, scroll-driven motion), not toward exhaustive coverage of Tailwind as a whole.

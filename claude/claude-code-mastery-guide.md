@@ -1,5 +1,7 @@
 # Mastering Claude Code, the Agent SDK & the Claude API — A Reference Guide
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 ## About This Document
 
 - **Framing:** Goal-driven. Written for a developer learning this before moving into Agentic Engineering / AI-Driven development — depth, examples, and prioritization are tailored toward the concrete commands, APIs, flags, and config actually touched for that goal, not general topical coverage.

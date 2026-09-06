@@ -1,5 +1,7 @@
 # MySQL Foundations
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 Part of the [MySQL Mastery Guide](./mysql-mastery-guide.md). Beginner → Working Knowledge only — this is the scaffolding the other files assume: connecting, storage engines at a glance, DDL, core types, and CRUD.
 
 ## Table of Contents

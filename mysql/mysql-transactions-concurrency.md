@@ -1,5 +1,7 @@
 # MySQL Transactions & Concurrency
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 Part of the [MySQL Mastery Guide](./mysql-mastery-guide.md). Full Beginner → Mastery depth — the area where MySQL's behavior diverges from Postgres the most sharply, since the two default to different isolation levels and InnoDB's locking model has no direct Postgres analogue.
 
 ## Table of Contents

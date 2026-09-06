@@ -1,5 +1,7 @@
 # MySQL Query Engine & Indexing
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 Part of the [MySQL Mastery Guide](./mysql-mastery-guide.md). Full Beginner → Mastery depth. Uses a bigger table so index effects are actually visible:
 
 ```sql

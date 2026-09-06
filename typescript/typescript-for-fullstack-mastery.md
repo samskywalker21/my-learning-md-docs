@@ -1,5 +1,7 @@
 # TypeScript for Full-Stack Mastery
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 ## About This Document
 
 - **Framing:** Curiosity-driven — no deadline or task is forcing this. Structured as a guided, hands-on progression through TypeScript's own concepts (not a JS-vs-TS history lesson — see the companion [JavaScript Mastery Guide](../javascript/javascript-for-typescript-mastery.md), which you've already covered). Theory appears only where it explains *why* a mechanism works the way it does, not as standalone history.

@@ -1,5 +1,7 @@
 # Mastering Tailwind CSS — A Hands-On Reference Guide
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 ## About This Document
 
 - **Framing:** Curiosity-driven. No upcoming task is driving this — the goal is durable, hands-on understanding of Tailwind CSS itself. Structured as a guided tutorial (a sequence of runnable examples/exercises meant to actually be tried, not just read), with theory sprinkled in only at the points where it explains a mechanism (e.g. *why* the JIT engine scans files as plain text, or *why* cascade layers matter for override order) — not as a standalone history section.

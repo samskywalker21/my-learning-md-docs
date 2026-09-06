@@ -1,5 +1,7 @@
 # Mastering Vue 3 — A Hands-On Reference Guide
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 ## About This Document
 
 - **Framing:** Curiosity-driven. No upcoming task is driving this — the goal is durable, hands-on understanding of Vue itself. Structured as a guided tutorial with runnable examples/exercises meant to actually be tried in a scaffolded project, with theory ("why it's designed this way") sprinkled in only where it explains a mechanism — e.g. *why* `reactive()` loses reactivity on destructure — not as standalone history.

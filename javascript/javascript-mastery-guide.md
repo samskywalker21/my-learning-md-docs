@@ -1,5 +1,7 @@
 # Mastering JavaScript — A Hands-On Reference Guide
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 ## About This Document
 
 - **Framing:** Curiosity-driven, modern-JS-forward. No upcoming task is driving this — the goal is durable, hands-on understanding of JavaScript itself. It is *not* framed around preparing for TypeScript, and it is *not* a historical/evolution narrative — theory ("why it's designed this way") only shows up where it's needed to explain a mechanism (e.g. the event loop, the prototype chain), not as standalone history.

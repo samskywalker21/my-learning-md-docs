@@ -1,5 +1,7 @@
 # Postgres Foundations
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 Part of the [Postgres SQL Mastery Guide](./postgres-mastery-guide.md).
 
 This file covers the ground floor: connecting with `psql`, the core DDL you'll write in nearly every project (`CREATE TABLE`, `ALTER TABLE`, schemas), the core DML (`INSERT`/`UPDATE`/`DELETE`/`SELECT`), and a tour of the built-in scalar data types. Advanced types (JSONB, arrays, ranges, composite types) live in [Data Modeling & Advanced Types](./postgres-data-modeling-types.md) — this file only tells you they exist and points you there.

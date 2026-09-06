@@ -1,5 +1,7 @@
 # Docker Mastery Guide — A Hands-On Reference
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 ## About This Document
 
 **Spec captured from the original request, so future updates match style without re-explaining:**

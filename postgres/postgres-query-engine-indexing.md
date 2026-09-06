@@ -1,5 +1,7 @@
 Part of the [Postgres SQL Mastery Guide](./postgres-mastery-guide.md).
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 ## Table of Contents
 
 - [Setup: A Table Worth Explaining](#setup-a-table-worth-explaining)

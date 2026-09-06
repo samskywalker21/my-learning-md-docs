@@ -2,6 +2,8 @@ Part of the [Postgres SQL Mastery Guide](./postgres-mastery-guide.md).
 
 # Data Modeling & Advanced Types
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 Scalar built-ins (`int`, `text`, `timestamp`, etc.) are covered in [Foundations](./postgres-foundations.md) — this file assumes you know those and picks up where structure gets interesting: constraints, when to break normal form on purpose, PostgreSQL 18's temporal constraints, generated columns, JSONB, arrays, ENUMs, and full-text search.
 
 ## Table of Contents

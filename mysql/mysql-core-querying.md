@@ -1,5 +1,7 @@
 # MySQL Core Querying
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 Part of the [MySQL Mastery Guide](./mysql-mastery-guide.md). Full Beginner → Mastery depth. Every example below runs against this shared schema — create it once and reuse it for the whole file:
 
 ```sql

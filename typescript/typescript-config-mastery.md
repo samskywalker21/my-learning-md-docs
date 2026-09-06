@@ -1,5 +1,7 @@
 # TypeScript Config Mastery
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 ## About This Document
 
 **Framing:** Goal-driven — optimized for the concrete configs, flags, and commands you'll actually touch across real project types, not a tour of every TSConfig option that exists.

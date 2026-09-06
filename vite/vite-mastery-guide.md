@@ -1,5 +1,7 @@
 # Mastering Vite — A Hands-On Reference Guide
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 ## About This Document
 
 - **Framing:** Curiosity-driven. No upcoming task is driving this — the goal is durable, hands-on understanding of Vite itself. Structured as a guided tutorial (runnable examples/exercises you're meant to actually try in a scaffolded project), with theory sprinkled in only where it explains a mechanism (e.g. *why* the dev server doesn't bundle on every request), not as standalone history.

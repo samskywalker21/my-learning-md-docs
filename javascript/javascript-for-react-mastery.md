@@ -1,5 +1,7 @@
 # JavaScript Mastery Guide (Pre-React)
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 ## About This Document
 
 - **Framing:** **Goal-driven** — learning JavaScript specifically as preparation for React. Depth, examples, and prioritization are tuned to the language mechanics React leans on hardest (referential identity, closures, immutable updates, array transforms, async cancellation). This is *not* a React tutorial: you will not learn `useState` here. You will learn the JavaScript that makes `useState` behave the way it does.
@@ -67,7 +69,6 @@ same object, new contents          new object, old one untouched
    ↓                                  ↓
 "it changed"                       Object.is(prev, next) === false → re-render
 
-
 Mutation is invisible to React:
 
   prev ──┐
@@ -75,7 +76,6 @@ Mutation is invisible to React:
   next ──┘
 
   Object.is(prev, next) === true  →  React: "nothing to do"
-
 
 Replacement is visible:
 

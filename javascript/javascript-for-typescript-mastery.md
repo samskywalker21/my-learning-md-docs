@@ -1,5 +1,7 @@
 # JavaScript Mastery Guide (Pre-TypeScript)
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 ## About This Document
 
 - **Framing:** **Goal-driven** — learning JavaScript specifically as preparation for TypeScript. Depth and prioritization favor the language-level features TypeScript's type system sits on top of, not general web-dev breadth (DOM/browser APIs excluded by default).

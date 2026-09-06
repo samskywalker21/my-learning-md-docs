@@ -1,5 +1,7 @@
 # Postgres SQL Mastery Guide
 
+> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+
 A curiosity-driven, hands-on reference for mastering Postgres SQL — built to be reopened and searched, not just read once. This file is the index: short summaries and links into six deep-dive files, each covering one major area at full depth.
 
 ## About This Document
