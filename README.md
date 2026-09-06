@@ -8,6 +8,9 @@ One folder per topic, one or more markdown docs inside. Docs pending a re-write 
 
 ```
 .
+├── topic-name/
+│   ├── topic-mastery-guide.md    ← overview (or the sole doc for the topic)
+│   └── topic-subarea.md          ← focused sub-docs, for large topics
 ├── legacy/
 │   └── topic-name/
 │       └── topic-notes.md
@@ -16,9 +19,54 @@ One folder per topic, one or more markdown docs inside. Docs pending a re-write 
 
 ## 📖 Index
 
+Docs written against the current [`prompt.md`](./prompt.md) template.
+
 | Topic | Doc | Last Updated | Status |
 |---|---|---|---|
-| Bun | [`legacy/bunjs/bunjs-mastery-guide.md`](./legacy/bunjs/bunjs-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
+| JavaScript — overview | [`javascript/javascript-mastery-guide.md`](./javascript/javascript-mastery-guide.md) | September 6, 2026 | ✅ done |
+| JavaScript — Foundations (Parts 1–3) | [`javascript/javascript-foundations.md`](./javascript/javascript-foundations.md) | September 6, 2026 | ✅ done |
+| JavaScript — Functions & Closures (Part 4) | [`javascript/javascript-functions-closures.md`](./javascript/javascript-functions-closures.md) | September 6, 2026 | ✅ done |
+| JavaScript — Objects & Classes (Parts 5, 7) | [`javascript/javascript-objects-classes.md`](./javascript/javascript-objects-classes.md) | September 6, 2026 | ✅ done |
+| JavaScript — Arrays & Iteration (Part 6) | [`javascript/javascript-arrays-iteration.md`](./javascript/javascript-arrays-iteration.md) | September 6, 2026 | ✅ done |
+| JavaScript — Errors, Async & Modules (Parts 8–10) | [`javascript/javascript-errors-async-modules.md`](./javascript/javascript-errors-async-modules.md) | September 6, 2026 | ✅ done |
+| JavaScript — Regex, Dates & Intl (Parts 11–12) | [`javascript/javascript-regex-dates-intl.md`](./javascript/javascript-regex-dates-intl.md) | September 6, 2026 | ✅ done |
+| JavaScript — Metaprogramming & Modern JS (Parts 13–14) | [`javascript/javascript-metaprogramming-modern.md`](./javascript/javascript-metaprogramming-modern.md) | September 6, 2026 | ✅ done |
+| TypeScript — overview | [`typescript/typescript-mastery-guide.md`](./typescript/typescript-mastery-guide.md) | September 6, 2026 | ✅ done |
+| TypeScript — Foundations (Parts 1–3) | [`typescript/typescript-foundations.md`](./typescript/typescript-foundations.md) | September 6, 2026 | ✅ done |
+| TypeScript — Narrowing & Functions (Parts 4–5) | [`typescript/typescript-narrowing-functions.md`](./typescript/typescript-narrowing-functions.md) | September 6, 2026 | ✅ done |
+| TypeScript — Objects & Classes (Parts 6–7) | [`typescript/typescript-objects-classes.md`](./typescript/typescript-objects-classes.md) | September 6, 2026 | ✅ done |
+| TypeScript — Generics (Part 8) | [`typescript/typescript-generics.md`](./typescript/typescript-generics.md) | September 6, 2026 | ✅ done |
+| TypeScript — Type-Level Programming (Parts 9–10) | [`typescript/typescript-type-level.md`](./typescript/typescript-type-level.md) | September 6, 2026 | ✅ done |
+| TypeScript — Modules & Ecosystem (Parts 11–12) | [`typescript/typescript-modules-ecosystem.md`](./typescript/typescript-modules-ecosystem.md) | September 6, 2026 | ✅ done |
+| React — overview | [`react/react-mastery-guide.md`](./react/react-mastery-guide.md) | September 6, 2026 | ✅ done |
+| React — Foundations (Parts 1–3) | [`react/react-foundations.md`](./react/react-foundations.md) | September 6, 2026 | ✅ done |
+| React — State & Events (Parts 4–5) | [`react/react-state-events.md`](./react/react-state-events.md) | September 6, 2026 | ✅ done |
+| React — Effects & Refs (Parts 6–7) | [`react/react-effects-refs.md`](./react/react-effects-refs.md) | September 6, 2026 | ✅ done |
+| React — Shared State & Data (Parts 8–9) | [`react/react-shared-state.md`](./react/react-shared-state.md) | September 6, 2026 | ✅ done |
+| React — Performance & Concurrency (Parts 10–11) | [`react/react-performance-concurrency.md`](./react/react-performance-concurrency.md) | September 6, 2026 | ✅ done |
+| React — Custom Hooks & Internals (Parts 12–13) | [`react/react-internals-hooks.md`](./react/react-internals-hooks.md) | September 6, 2026 | ✅ done |
+| Vue 3 — overview | [`vue/vue-mastery-guide.md`](./vue/vue-mastery-guide.md) | September 6, 2026 | ✅ done |
+| Vue 3 — Reactivity (Parts 1–2) | [`vue/vue-reactivity.md`](./vue/vue-reactivity.md) | September 6, 2026 | ✅ done |
+| Vue 3 — Templates, Directives, Events & Forms (Parts 3–4) | [`vue/vue-templates-directives.md`](./vue/vue-templates-directives.md) | September 6, 2026 | ✅ done |
+| Vue 3 — Components & `<script setup>` (Parts 5–6) | [`vue/vue-components-script-setup.md`](./vue/vue-components-script-setup.md) | September 6, 2026 | ✅ done |
+| Vue 3 — Slots, Provide/Inject & Watchers (Parts 7–9) | [`vue/vue-slots-injection-watchers.md`](./vue/vue-slots-injection-watchers.md) | September 6, 2026 | ✅ done |
+| Vue 3 — Composables & Built-ins (Parts 10–11) | [`vue/vue-composables-builtins.md`](./vue/vue-composables-builtins.md) | September 6, 2026 | ✅ done |
+| Vue 3 — Internals & Performance (Parts 12–13) | [`vue/vue-internals-performance.md`](./vue/vue-internals-performance.md) | September 6, 2026 | ✅ done |
+| Bun — overview | [`bun/bun-mastery-guide.md`](./bun/bun-mastery-guide.md) | September 6, 2026 | ✅ done |
+| Bun — Runtime Foundations (Parts 1–3) | [`bun/bun-runtime-foundations.md`](./bun/bun-runtime-foundations.md) | September 6, 2026 | ✅ done |
+| Bun — Package Manager (Parts 4–5) | [`bun/bun-package-manager.md`](./bun/bun-package-manager.md) | September 6, 2026 | ✅ done |
+| Bun — APIs, I/O & Processes (Parts 6–8) | [`bun/bun-apis-io-processes.md`](./bun/bun-apis-io-processes.md) | September 6, 2026 | ✅ done |
+| Bun — Servers, Networking & Data (Parts 9–10) | [`bun/bun-servers-networking-data.md`](./bun/bun-servers-networking-data.md) | September 6, 2026 | ✅ done |
+| Bun — Testing & Bundling (Parts 11–12) | [`bun/bun-testing-bundling.md`](./bun/bun-testing-bundling.md) | September 6, 2026 | ✅ done |
+| Bun — Node Compat & Internals (Part 13) | [`bun/bun-node-compat-internals.md`](./bun/bun-node-compat-internals.md) | September 6, 2026 | ✅ done |
+
+## 🗂️ Legacy Index
+
+Docs pending a re-write against the current template.
+
+| Topic | Doc | Last Updated | Status |
+|---|---|---|---|
+| Bun | [`legacy/bunjs/bunjs-mastery-guide.md`](./legacy/bunjs/bunjs-mastery-guide.md) | September 3, 2026 | ⤴️ superseded by [`bun/`](./bun/bun-mastery-guide.md) |
 | Claude Code / Agent SDK / API | [`legacy/claude/claude-code-mastery-guide.md`](./legacy/claude/claude-code-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
 | Docker | [`legacy/docker/docker-mastery-guide.md`](./legacy/docker/docker-mastery-guide.md) | — | 🔄 needs re-write |
 | JavaScript | [`legacy/javascript/javascript-mastery-guide.md`](./legacy/javascript/javascript-mastery-guide.md) | September 6, 2026 | 🔄 needs re-write |
@@ -31,11 +79,19 @@ One folder per topic, one or more markdown docs inside. Docs pending a re-write 
 | Tailwind CSS — Responsive Layouts | [`legacy/tailwindcss/tailwindcss-responsive-layouts.md`](./legacy/tailwindcss/tailwindcss-responsive-layouts.md) | September 3, 2026 | 🔄 needs re-write |
 | Tailwind CSS — Animations | [`legacy/tailwindcss/tailwindcss-animations.md`](./legacy/tailwindcss/tailwindcss-animations.md) | September 3, 2026 | 🔄 needs re-write |
 | Vite | [`legacy/vite/vite-mastery-guide.md`](./legacy/vite/vite-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
-| Vue 3 | [`legacy/vuejs/vue-mastery-guide.md`](./legacy/vuejs/vue-mastery-guide.md) | September 6, 2026 | 🔄 needs re-write |
+| Vue 3 | [`legacy/vuejs/vue-mastery-guide.md`](./legacy/vuejs/vue-mastery-guide.md) | September 6, 2026 | ⤴️ superseded by [`vue/`](./vue/vue-mastery-guide.md) |
 
 *(Add a row whenever a new doc is added. Status: 📝 in progress · ✅ done · 🔄 needs re-write — or whatever markers are useful.)*
 
-**Note:** All guides above (plus several not yet indexed here — MySQL, TypeScript, CI/CD, and Monorepo docs) are marked 🔄 **needs re-write** as of September 6, 2026: they predate the current [`prompt.md`](./prompt.md) template and now live under `legacy/` pending regeneration/update against it.
+**Note:** The legacy guides (plus several not indexed here — MySQL, TypeScript, CI/CD, and Monorepo docs) are marked 🔄 **needs re-write** as of September 6, 2026: they predate the current [`prompt.md`](./prompt.md) template and live under `legacy/` pending regeneration against it.
+
+The legacy React guide (`legacy/react/react-mastery-guide.md`) is **superseded by the `react/` set above**, which is written against React 19.2.7 and additionally annotates every difference for React 18 (see [Part 14](./react/react-mastery-guide.md#5-part-14-react-18--19)). The legacy doc cites a React version that was never released and predates `<Activity>`, `useEffectEvent` and React Compiler 1.x; don't use it for version-specific advice.
+
+The three legacy JavaScript docs are **superseded by the `javascript/` set above** for core-language material. `javascript-for-react-mastery.md` and `javascript-for-typescript-mastery.md` still cover framing the new set deliberately excludes (React- and TypeScript-oriented prep), so they are kept rather than removed.
+
+The two legacy TypeScript docs (`legacy/typescript/typescript-config-mastery.md`, `legacy/typescript/typescript-for-fullstack-mastery.md`) are **superseded by the `typescript/` set above**, which is written against TypeScript 7 — the legacy pair predates the TypeScript 6.0/7.0 default and flag changes of 2026 and should not be used for config advice.
+
+The legacy Bun guide (`legacy/bunjs/bunjs-mastery-guide.md`) is **superseded by the `bun/` set above**. It was already written against Bun 1.4 and is not materially wrong; the new set replaces it because it is one 594-line doc rather than an overview plus focused sub-docs, and it assumes no Node background where the new set adds an explicit runtime primer. Kept for reference, not for extending.
 
 ## 🧭 Doc Conventions
 

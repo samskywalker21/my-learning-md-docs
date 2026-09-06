@@ -1,6 +1,6 @@
 # Mastering Vue 3 — A Hands-On Reference Guide
 
-> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+> ⤴️ **Superseded** — re-written against the current `prompt.md` template as the multi-doc set in [`vue/`](../../vue/vue-mastery-guide.md) (September 6, 2026). Kept for reference only; prefer the new set.
 
 ## About This Document
 
