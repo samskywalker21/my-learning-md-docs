@@ -4,12 +4,13 @@ A personal collection of reference docs for topics I'm learning — meant to be 
 
 ## 📂 Structure
 
-One folder per topic, one or more markdown docs inside:
+One folder per topic, one or more markdown docs inside. Docs pending a re-write against the current [`prompt.md`](./prompt.md) template live under `legacy/`:
 
 ```
 .
-├── topic-name/
-│   └── topic-notes.md
+├── legacy/
+│   └── topic-name/
+│       └── topic-notes.md
 └── README.md
 ```
 
@@ -17,24 +18,24 @@ One folder per topic, one or more markdown docs inside:
 
 | Topic | Doc | Last Updated | Status |
 |---|---|---|---|
-| Bun | [`bunjs/bunjs-mastery-guide.md`](./bunjs/bunjs-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
-| Claude Code / Agent SDK / API | [`claude/claude-code-mastery-guide.md`](./claude/claude-code-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
-| Docker | [`docker/docker-mastery-guide.md`](./docker/docker-mastery-guide.md) | — | 🔄 needs re-write |
-| JavaScript | [`javascript/javascript-mastery-guide.md`](./javascript/javascript-mastery-guide.md) | September 6, 2026 | 🔄 needs re-write |
-| JavaScript — for React | [`javascript/javascript-for-react-mastery.md`](./javascript/javascript-for-react-mastery.md) | September 6, 2026 | 🔄 needs re-write |
-| JavaScript — for TypeScript | [`javascript/javascript-for-typescript-mastery.md`](./javascript/javascript-for-typescript-mastery.md) | September 6, 2026 | 🔄 needs re-write |
-| Node.js | [`nodejs/nodejs-mastery-guide.md`](./nodejs/nodejs-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
-| Postgres SQL | [`postgres/postgres-mastery-guide.md`](./postgres/postgres-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
-| React | [`react/react-mastery-guide.md`](./react/react-mastery-guide.md) | September 6, 2026 | 🔄 needs re-write |
-| Tailwind CSS | [`tailwindcss/tailwindcss-mastery-guide.md`](./tailwindcss/tailwindcss-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
-| Tailwind CSS — Responsive Layouts | [`tailwindcss/tailwindcss-responsive-layouts.md`](./tailwindcss/tailwindcss-responsive-layouts.md) | September 3, 2026 | 🔄 needs re-write |
-| Tailwind CSS — Animations | [`tailwindcss/tailwindcss-animations.md`](./tailwindcss/tailwindcss-animations.md) | September 3, 2026 | 🔄 needs re-write |
-| Vite | [`vite/vite-mastery-guide.md`](./vite/vite-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
-| Vue 3 | [`vuejs/vue-mastery-guide.md`](./vuejs/vue-mastery-guide.md) | September 6, 2026 | 🔄 needs re-write |
+| Bun | [`legacy/bunjs/bunjs-mastery-guide.md`](./legacy/bunjs/bunjs-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
+| Claude Code / Agent SDK / API | [`legacy/claude/claude-code-mastery-guide.md`](./legacy/claude/claude-code-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
+| Docker | [`legacy/docker/docker-mastery-guide.md`](./legacy/docker/docker-mastery-guide.md) | — | 🔄 needs re-write |
+| JavaScript | [`legacy/javascript/javascript-mastery-guide.md`](./legacy/javascript/javascript-mastery-guide.md) | September 6, 2026 | 🔄 needs re-write |
+| JavaScript — for React | [`legacy/javascript/javascript-for-react-mastery.md`](./legacy/javascript/javascript-for-react-mastery.md) | September 6, 2026 | 🔄 needs re-write |
+| JavaScript — for TypeScript | [`legacy/javascript/javascript-for-typescript-mastery.md`](./legacy/javascript/javascript-for-typescript-mastery.md) | September 6, 2026 | 🔄 needs re-write |
+| Node.js | [`legacy/nodejs/nodejs-mastery-guide.md`](./legacy/nodejs/nodejs-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
+| Postgres SQL | [`legacy/postgres/postgres-mastery-guide.md`](./legacy/postgres/postgres-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
+| React | [`legacy/react/react-mastery-guide.md`](./legacy/react/react-mastery-guide.md) | September 6, 2026 | 🔄 needs re-write |
+| Tailwind CSS | [`legacy/tailwindcss/tailwindcss-mastery-guide.md`](./legacy/tailwindcss/tailwindcss-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
+| Tailwind CSS — Responsive Layouts | [`legacy/tailwindcss/tailwindcss-responsive-layouts.md`](./legacy/tailwindcss/tailwindcss-responsive-layouts.md) | September 3, 2026 | 🔄 needs re-write |
+| Tailwind CSS — Animations | [`legacy/tailwindcss/tailwindcss-animations.md`](./legacy/tailwindcss/tailwindcss-animations.md) | September 3, 2026 | 🔄 needs re-write |
+| Vite | [`legacy/vite/vite-mastery-guide.md`](./legacy/vite/vite-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
+| Vue 3 | [`legacy/vuejs/vue-mastery-guide.md`](./legacy/vuejs/vue-mastery-guide.md) | September 6, 2026 | 🔄 needs re-write |
 
 *(Add a row whenever a new doc is added. Status: 📝 in progress · ✅ done · 🔄 needs re-write — or whatever markers are useful.)*
 
-**Note:** All guides above (plus several not yet indexed here — MySQL, TypeScript, CI/CD, and Monorepo docs) are marked 🔄 **needs re-write** as of September 6, 2026: they predate the current [`prompt.md`](./prompt.md) template and will be regenerated/updated against it going forward.
+**Note:** All guides above (plus several not yet indexed here — MySQL, TypeScript, CI/CD, and Monorepo docs) are marked 🔄 **needs re-write** as of September 6, 2026: they predate the current [`prompt.md`](./prompt.md) template and now live under `legacy/` pending regeneration/update against it.
 
 ## 🧭 Doc Conventions
 
@@ -47,7 +48,7 @@ Loose defaults — adjust per topic as needed:
 
 ## ➕ Adding a Topic
 
-1. `mkdir topic-name`
+1. `mkdir topic-name` (at the repo root — `legacy/` is only for docs pending re-write)
 2. Add the doc(s)
 3. Add a row to the Index
 
