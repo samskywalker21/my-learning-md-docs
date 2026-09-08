@@ -66,6 +66,13 @@ Docs written against the current [`prompt.md`](./prompt.md) template.
 | Claude Code — Permissions & Security (Parts 8–9) | [`claude-code/claude-code-permissions-security.md`](./claude-code/claude-code-permissions-security.md) | September 6, 2026 | ✅ done |
 | Claude Code — Extensibility (Parts 10–12) | [`claude-code/claude-code-extensibility.md`](./claude-code/claude-code-extensibility.md) | September 6, 2026 | ✅ done |
 | Claude Code — Automation & Agents (Parts 13–14) | [`claude-code/claude-code-automation-agents.md`](./claude-code/claude-code-automation-agents.md) | September 6, 2026 | ✅ done |
+| Modern CSS — overview | [`css/css-mastery-guide.md`](./css/css-mastery-guide.md) | September 8, 2026 | ✅ done |
+| Modern CSS — Foundations (Parts 1–3) | [`css/css-foundations.md`](./css/css-foundations.md) | September 8, 2026 | ✅ done |
+| Modern CSS — Positioning, Flexbox & Grid (Parts 4–6) | [`css/css-layout-flex-grid.md`](./css/css-layout-flex-grid.md) | September 8, 2026 | ✅ done |
+| Modern CSS — Responsive & Typography (Parts 7–8) | [`css/css-responsive-typography.md`](./css/css-responsive-typography.md) | September 8, 2026 | ✅ done |
+| Modern CSS — Colour & Visual Effects (Parts 9–10) | [`css/css-color-visuals.md`](./css/css-color-visuals.md) | September 8, 2026 | ✅ done |
+| Modern CSS — Architecture: Layers, Scope & Nesting (Parts 11–12) | [`css/css-architecture.md`](./css/css-architecture.md) | September 8, 2026 | ✅ done |
+| Modern CSS — Animation & Performance (Parts 13–14) | [`css/css-animation-performance.md`](./css/css-animation-performance.md) | September 8, 2026 | ✅ done |
 
 ## 🗂️ Legacy Index
 
