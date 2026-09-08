@@ -1,6 +1,6 @@
 # Mastering Tailwind CSS — A Hands-On Reference Guide
 
-> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+> ⤴️ **Superseded by [`tailwindcss/`](../../tailwindcss/tailwindcss-mastery-guide.md)** — an overview plus five sub-docs written against **v4.3.3**. This doc says "Tailwind v4" without a minor version and predates v4.2/v4.3, so its **Part 7 (Engine Internals)** and the **Part 8 cheat-sheet utility tables** are the sections most likely to mislead. Kept for reference, not for extending.
 
 ## About This Document
 

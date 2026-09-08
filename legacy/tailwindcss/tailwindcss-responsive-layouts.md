@@ -1,6 +1,6 @@
 # Modern Responsive Layouts with Tailwind CSS — A Goal-Driven Guide
 
-> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+> ⤴️ **Superseded by [`tailwindcss/tailwindcss-layout-responsive.md`](../../tailwindcss/tailwindcss-layout-responsive.md)** (Parts 4–5), written against **v4.3.3**. This doc predates the v4.2 logical-property utilities (`mbs-*`, `inline-*`, `inset-s-*`, and the `start-*`/`end-*` deprecation) and v4.3's `@container-size`. Kept for reference, not for extending.
 
 ## About This Document
 
