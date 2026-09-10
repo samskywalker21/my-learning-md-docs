@@ -66,6 +66,19 @@ Docs written against the current [`prompt.md`](./prompt.md) template.
 | Claude Code — Permissions & Security (Parts 8–9) | [`claude-code/claude-code-permissions-security.md`](./claude-code/claude-code-permissions-security.md) | September 6, 2026 | ✅ done |
 | Claude Code — Extensibility (Parts 10–12) | [`claude-code/claude-code-extensibility.md`](./claude-code/claude-code-extensibility.md) | September 6, 2026 | ✅ done |
 | Claude Code — Automation & Agents (Parts 13–14) | [`claude-code/claude-code-automation-agents.md`](./claude-code/claude-code-automation-agents.md) | September 6, 2026 | ✅ done |
+| Modern CSS — overview | [`css/css-mastery-guide.md`](./css/css-mastery-guide.md) | September 8, 2026 | ✅ done |
+| Modern CSS — Foundations (Parts 1–3) | [`css/css-foundations.md`](./css/css-foundations.md) | September 8, 2026 | ✅ done |
+| Modern CSS — Positioning, Flexbox & Grid (Parts 4–6) | [`css/css-layout-flex-grid.md`](./css/css-layout-flex-grid.md) | September 8, 2026 | ✅ done |
+| Modern CSS — Responsive & Typography (Parts 7–8) | [`css/css-responsive-typography.md`](./css/css-responsive-typography.md) | September 8, 2026 | ✅ done |
+| Modern CSS — Colour & Visual Effects (Parts 9–10) | [`css/css-color-visuals.md`](./css/css-color-visuals.md) | September 8, 2026 | ✅ done |
+| Modern CSS — Architecture: Layers, Scope & Nesting (Parts 11–12) | [`css/css-architecture.md`](./css/css-architecture.md) | September 8, 2026 | ✅ done |
+| Modern CSS — Animation & Performance (Parts 13–14) | [`css/css-animation-performance.md`](./css/css-animation-performance.md) | September 8, 2026 | ✅ done |
+| Tailwind CSS — overview | [`tailwindcss/tailwindcss-mastery-guide.md`](./tailwindcss/tailwindcss-mastery-guide.md) | September 8, 2026 | ✅ done |
+| Tailwind CSS — Foundations (Parts 1–3) | [`tailwindcss/tailwindcss-foundations.md`](./tailwindcss/tailwindcss-foundations.md) | September 8, 2026 | ✅ done |
+| Tailwind CSS — Layout & Responsive (Parts 4–5) | [`tailwindcss/tailwindcss-layout-responsive.md`](./tailwindcss/tailwindcss-layout-responsive.md) | September 8, 2026 | ✅ done |
+| Tailwind CSS — Theming & Design (Parts 6–7) | [`tailwindcss/tailwindcss-theming-design.md`](./tailwindcss/tailwindcss-theming-design.md) | September 8, 2026 | ✅ done |
+| Tailwind CSS — Reuse & Architecture (Parts 8–9) | [`tailwindcss/tailwindcss-reuse-architecture.md`](./tailwindcss/tailwindcss-reuse-architecture.md) | September 8, 2026 | ✅ done |
+| Tailwind CSS — Engine & Extensibility (Parts 10–12) | [`tailwindcss/tailwindcss-engine-extensibility.md`](./tailwindcss/tailwindcss-engine-extensibility.md) | September 8, 2026 | ✅ done |
 
 ## 🗂️ Legacy Index
 
@@ -82,9 +95,9 @@ Docs pending a re-write against the current template.
 | Node.js | [`legacy/nodejs/nodejs-mastery-guide.md`](./legacy/nodejs/nodejs-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
 | Postgres SQL | [`legacy/postgres/postgres-mastery-guide.md`](./legacy/postgres/postgres-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
 | React | [`legacy/react/react-mastery-guide.md`](./legacy/react/react-mastery-guide.md) | September 6, 2026 | 🔄 needs re-write |
-| Tailwind CSS | [`legacy/tailwindcss/tailwindcss-mastery-guide.md`](./legacy/tailwindcss/tailwindcss-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
-| Tailwind CSS — Responsive Layouts | [`legacy/tailwindcss/tailwindcss-responsive-layouts.md`](./legacy/tailwindcss/tailwindcss-responsive-layouts.md) | September 3, 2026 | 🔄 needs re-write |
-| Tailwind CSS — Animations | [`legacy/tailwindcss/tailwindcss-animations.md`](./legacy/tailwindcss/tailwindcss-animations.md) | September 3, 2026 | 🔄 needs re-write |
+| Tailwind CSS | [`legacy/tailwindcss/tailwindcss-mastery-guide.md`](./legacy/tailwindcss/tailwindcss-mastery-guide.md) | September 3, 2026 | ⤴️ superseded by [`tailwindcss/`](./tailwindcss/tailwindcss-mastery-guide.md) |
+| Tailwind CSS — Responsive Layouts | [`legacy/tailwindcss/tailwindcss-responsive-layouts.md`](./legacy/tailwindcss/tailwindcss-responsive-layouts.md) | September 3, 2026 | ⤴️ superseded by [`tailwindcss/`](./tailwindcss/tailwindcss-layout-responsive.md) |
+| Tailwind CSS — Animations | [`legacy/tailwindcss/tailwindcss-animations.md`](./legacy/tailwindcss/tailwindcss-animations.md) | September 3, 2026 | ⤴️ superseded by [`tailwindcss/`](./tailwindcss/tailwindcss-theming-design.md) |
 | Vite | [`legacy/vite/vite-mastery-guide.md`](./legacy/vite/vite-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
 | Vue 3 | [`legacy/vuejs/vue-mastery-guide.md`](./legacy/vuejs/vue-mastery-guide.md) | September 6, 2026 | ⤴️ superseded by [`vue/`](./vue/vue-mastery-guide.md) |
 
@@ -99,6 +112,8 @@ The three legacy JavaScript docs are **superseded by the `javascript/` set above
 The two legacy TypeScript docs (`legacy/typescript/typescript-config-mastery.md`, `legacy/typescript/typescript-for-fullstack-mastery.md`) are **superseded by the `typescript/` set above**, which is written against TypeScript 7 — the legacy pair predates the TypeScript 6.0/7.0 default and flag changes of 2026 and should not be used for config advice.
 
 The legacy Bun guide (`legacy/bunjs/bunjs-mastery-guide.md`) is **superseded by the `bun/` set above**. It was already written against Bun 1.4 and is not materially wrong; the new set replaces it because it is one 594-line doc rather than an overview plus focused sub-docs, and it assumes no Node background where the new set adds an explicit runtime primer. Kept for reference, not for extending.
+
+The three legacy Tailwind guides are **superseded by the `tailwindcss/` set above**. They were written against "Tailwind v4" generically and predate **v4.2 and v4.3**, so they miss the webpack plugin, the `mauve`/`olive`/`mist`/`taupe` palettes, the logical-property expansion (`mbs-*`, `inline-*`, `inset-s-*`) and the resulting `start-*`/`end-*` deprecation, `font-features-*`, the `scrollbar-*`/`zoom-*`/`tab-*` utilities, `@container-size`, stacked/compound `@variant`, and `--default()` in `@utility`. Their **engine Part and cheat-sheet utility tables are the specific sections now out of date** — the conceptual material on utility-first CSS and the JIT scanner still reads fine. The new set is written against **v4.3.3**, verified against a real local build, and assumes the [`css/`](./css/css-mastery-guide.md) set rather than re-teaching CSS.
 
 The legacy Claude Code guide (`legacy/claude/claude-code-mastery-guide.md`) is **superseded by the `claude-code/` set above** for everything about the CLI. Much of its version-specific material is now wrong — it predates auto mode becoming the default starting permission mode, auto memory, `.claude/rules/`, MCP tool search, and the skills-over-`.claude/commands/` migration. It is kept only because it also covers the **Claude Agent SDK and Claude API**, which the new set deliberately excludes; treat those two Parts as the reason to open it, and nothing else.
 

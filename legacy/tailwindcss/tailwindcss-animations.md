@@ -1,6 +1,6 @@
 # Building Animations with Tailwind CSS — A Goal-Driven Guide
 
-> 🔄 **Needs re-write** — predates the current `prompt.md` template. Will be regenerated/updated to match it; treat as possibly stale on structure/format until then.
+> ⤴️ **Partly superseded by [`tailwindcss/`](../../tailwindcss/tailwindcss-mastery-guide.md)** — the new set covers Tailwind's effect and transition utilities in [Part 7](../../tailwindcss/tailwindcss-theming-design.md), and the underlying CSS animation model is now covered properly in [`css/css-animation-performance.md`](../../css/css-animation-performance.md). This doc's deeper animation-recipe material has no direct replacement, so it is kept for that; treat anything version-specific in it as predating v4.2/v4.3.
 
 ## About This Document
 
