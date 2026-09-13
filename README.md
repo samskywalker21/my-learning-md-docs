@@ -79,6 +79,13 @@ Docs written against the current [`prompt.md`](./prompt.md) template.
 | Tailwind CSS — Theming & Design (Parts 6–7) | [`tailwindcss/tailwindcss-theming-design.md`](./tailwindcss/tailwindcss-theming-design.md) | September 8, 2026 | ✅ done |
 | Tailwind CSS — Reuse & Architecture (Parts 8–9) | [`tailwindcss/tailwindcss-reuse-architecture.md`](./tailwindcss/tailwindcss-reuse-architecture.md) | September 8, 2026 | ✅ done |
 | Tailwind CSS — Engine & Extensibility (Parts 10–12) | [`tailwindcss/tailwindcss-engine-extensibility.md`](./tailwindcss/tailwindcss-engine-extensibility.md) | September 8, 2026 | ✅ done |
+| Next.js — overview | [`nextjs/nextjs-mastery-guide.md`](./nextjs/nextjs-mastery-guide.md) | September 11, 2026 | ✅ done |
+| Next.js — Routing & Rendering (Parts 1–3) | [`nextjs/nextjs-routing-rendering.md`](./nextjs/nextjs-routing-rendering.md) | September 11, 2026 | ✅ done |
+| Next.js — Data & Caching (Parts 4–5) | [`nextjs/nextjs-data-caching.md`](./nextjs/nextjs-data-caching.md) | September 11, 2026 | ✅ done |
+| Next.js — Mutations & API Layer (Parts 6–7) | [`nextjs/nextjs-mutations-api.md`](./nextjs/nextjs-mutations-api.md) | September 11, 2026 | ✅ done |
+| Next.js — Database & Auth (Parts 8–9) | [`nextjs/nextjs-database-auth.md`](./nextjs/nextjs-database-auth.md) | September 11, 2026 | ✅ done |
+| Next.js — Navigation & Assets (Parts 10–11) | [`nextjs/nextjs-navigation-assets.md`](./nextjs/nextjs-navigation-assets.md) | September 11, 2026 | ✅ done |
+| Next.js — Production & Deployment (Parts 12–13) | [`nextjs/nextjs-production-deployment.md`](./nextjs/nextjs-production-deployment.md) | September 11, 2026 | ✅ done |
 
 ## 🗂️ Legacy Index
 
