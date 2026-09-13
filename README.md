@@ -4,16 +4,20 @@ A personal collection of reference docs for topics I'm learning — meant to be 
 
 ## 📂 Structure
 
-One folder per topic, one or more markdown docs inside. Docs pending a re-write against the current [`prompt.md`](./prompt.md) template live under `legacy/`:
+One folder per topic, one or more markdown docs inside. Roadmaps between two related topics live under `roadmaps/`. Docs pending a re-write against the current [`prompt.md`](./prompt.md) template live under `legacy/`:
 
 ```
 .
 ├── topic-name/
 │   ├── topic-mastery-guide.md    ← overview (or the sole doc for the topic)
 │   └── topic-subarea.md          ← focused sub-docs, for large topics
+├── roadmaps/
+│   └── from-to-to-roadmap.md     ← checklist from one topic to a related one
 ├── legacy/
 │   └── topic-name/
 │       └── topic-notes.md
+├── prompt.md                     ← template for mastery guides
+├── roadmap-prompt.md             ← template for roadmaps
 └── README.md
 ```
 
@@ -87,6 +91,16 @@ Docs written against the current [`prompt.md`](./prompt.md) template.
 | Next.js — Navigation & Assets (Parts 10–11) | [`nextjs/nextjs-navigation-assets.md`](./nextjs/nextjs-navigation-assets.md) | September 11, 2026 | ✅ done |
 | Next.js — Production & Deployment (Parts 12–13) | [`nextjs/nextjs-production-deployment.md`](./nextjs/nextjs-production-deployment.md) | September 11, 2026 | ✅ done |
 
+## 🧭 Roadmaps
+
+Prioritized checklists for moving from one topic to a related one, written against [`roadmap-prompt.md`](./roadmap-prompt.md). Each item links into the mastery guides above rather than re-teaching.
+
+| From → To | Pair Type | Doc | Last Updated | Status |
+|---|---|---|---|---|
+| *(none yet)* | | | | |
+
+*Pair type: **prerequisite** (learn A before B) or **lateral** (know A, moving to related B). When a linked guide's Last Updated date is newer than a roadmap's, re-verify that roadmap's anchors.*
+
 ## 🗂️ Legacy Index
 
 Docs pending a re-write against the current template.
@@ -139,9 +153,15 @@ Loose defaults — adjust per topic as needed:
 2. Add the doc(s)
 3. Add a row to the Index
 
+## ➕ Adding a Roadmap
+
+1. Copy [`roadmap-prompt.md`](./roadmap-prompt.md) into a chat run from the repo root, and fill in the from/to topics
+2. Answer its scoping questions. If either topic has no current doc, it stops and asks whether to generate one with [`prompt.md`](./prompt.md) first
+3. Save to `roadmaps/<from>-to-<to>-roadmap.md` and add a row to the Roadmaps table
+
 ## 🤖 Prompt Template
 
-Copy this into a new chat to generate a doc in the same style:
+The canonical templates are [`prompt.md`](./prompt.md) (mastery guides) and [`roadmap-prompt.md`](./roadmap-prompt.md) (roadmaps). The older, shorter mastery-guide template below is kept for reference:
 
 
 ```

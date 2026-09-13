@@ -36,4 +36,8 @@ Some topics (e.g. `mysql`, `postgres`) are split into a `*-mastery-guide.md` ove
 2. When extending an existing doc, read its "About This Document" section first and match its established framing/scope/tier choices rather than re-deriving style from scratch.
 3. Save the result as a Markdown file in the appropriate topic folder, include an "About This Document" section, and add/update the row in `README.md`'s index table.
 
+## Generating a roadmap between two topics
+
+`roadmap-prompt.md` is the template for roadmaps: prioritized checklists (🔴 Must / 🟡 Should / ⚪ Skip-for-now) for moving from one topic to a related one, either prerequisite → dependent or lateral. Roadmaps live in `roadmaps/<from>-to-<to>-roadmap.md`, link to verified section anchors in the mastery guides instead of teaching, stop and ask when a needed topic has no current doc, carry an "About This Roadmap" section, and get a row in `README.md`'s Roadmaps table.
+
 Note: `README.md`'s index currently references a `react-nextjs/react-concepts-before-nextjs.md` doc that does not exist in the repo — verify before assuming any indexed doc is present.
