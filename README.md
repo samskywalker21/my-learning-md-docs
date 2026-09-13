@@ -90,6 +90,13 @@ Docs written against the current [`prompt.md`](./prompt.md) template.
 | Next.js — Database & Auth (Parts 8–9) | [`nextjs/nextjs-database-auth.md`](./nextjs/nextjs-database-auth.md) | September 11, 2026 | ✅ done |
 | Next.js — Navigation & Assets (Parts 10–11) | [`nextjs/nextjs-navigation-assets.md`](./nextjs/nextjs-navigation-assets.md) | September 11, 2026 | ✅ done |
 | Next.js — Production & Deployment (Parts 12–13) | [`nextjs/nextjs-production-deployment.md`](./nextjs/nextjs-production-deployment.md) | September 11, 2026 | ✅ done |
+| Vite — overview | [`vite/vite-mastery-guide.md`](./vite/vite-mastery-guide.md) | September 13, 2026 | ✅ done |
+| Vite — Dev Server & HMR (Parts 1–3) | [`vite/vite-dev-server.md`](./vite/vite-dev-server.md) | September 13, 2026 | ✅ done |
+| Vite — Config, Env & Assets (Parts 4–6) | [`vite/vite-config-env-assets.md`](./vite/vite-config-env-assets.md) | September 13, 2026 | ✅ done |
+| Vite — Build & Deploy (Parts 7–9) | [`vite/vite-build-deploy.md`](./vite/vite-build-deploy.md) | September 13, 2026 | ✅ done |
+| Vite — Plugins & Monorepos (Parts 10–11) | [`vite/vite-plugins-monorepo.md`](./vite/vite-plugins-monorepo.md) | September 13, 2026 | ✅ done |
+| Vite — Testing with Vitest (Part 12) | [`vite/vite-testing-vitest.md`](./vite/vite-testing-vitest.md) | September 13, 2026 | ✅ done |
+| Vite — SSR & Internals (Parts 13–14) | [`vite/vite-ssr-internals.md`](./vite/vite-ssr-internals.md) | September 13, 2026 | ✅ done |
 
 ## 🧭 Roadmaps
 
@@ -119,7 +126,7 @@ Docs pending a re-write against the current template.
 | Tailwind CSS | [`legacy/tailwindcss/tailwindcss-mastery-guide.md`](./legacy/tailwindcss/tailwindcss-mastery-guide.md) | September 3, 2026 | ⤴️ superseded by [`tailwindcss/`](./tailwindcss/tailwindcss-mastery-guide.md) |
 | Tailwind CSS — Responsive Layouts | [`legacy/tailwindcss/tailwindcss-responsive-layouts.md`](./legacy/tailwindcss/tailwindcss-responsive-layouts.md) | September 3, 2026 | ⤴️ superseded by [`tailwindcss/`](./tailwindcss/tailwindcss-layout-responsive.md) |
 | Tailwind CSS — Animations | [`legacy/tailwindcss/tailwindcss-animations.md`](./legacy/tailwindcss/tailwindcss-animations.md) | September 3, 2026 | ⤴️ superseded by [`tailwindcss/`](./tailwindcss/tailwindcss-theming-design.md) |
-| Vite | [`legacy/vite/vite-mastery-guide.md`](./legacy/vite/vite-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
+| Vite | [`legacy/vite/vite-mastery-guide.md`](./legacy/vite/vite-mastery-guide.md) | September 3, 2026 | ⤴️ superseded by [`vite/`](./vite/vite-mastery-guide.md) |
 | Vue 3 | [`legacy/vuejs/vue-mastery-guide.md`](./legacy/vuejs/vue-mastery-guide.md) | September 6, 2026 | ⤴️ superseded by [`vue/`](./vue/vue-mastery-guide.md) |
 
 *(Add a row whenever a new doc is added. Status: 📝 in progress · ✅ done · 🔄 needs re-write — or whatever markers are useful.)*
@@ -135,6 +142,8 @@ The two legacy TypeScript docs (`legacy/typescript/typescript-config-mastery.md`
 The legacy Bun guide (`legacy/bunjs/bunjs-mastery-guide.md`) is **superseded by the `bun/` set above**. It was already written against Bun 1.4 and is not materially wrong; the new set replaces it because it is one 594-line doc rather than an overview plus focused sub-docs, and it assumes no Node background where the new set adds an explicit runtime primer. Kept for reference, not for extending.
 
 The three legacy Tailwind guides are **superseded by the `tailwindcss/` set above**. They were written against "Tailwind v4" generically and predate **v4.2 and v4.3**, so they miss the webpack plugin, the `mauve`/`olive`/`mist`/`taupe` palettes, the logical-property expansion (`mbs-*`, `inline-*`, `inset-s-*`) and the resulting `start-*`/`end-*` deprecation, `font-features-*`, the `scrollbar-*`/`zoom-*`/`tab-*` utilities, `@container-size`, stacked/compound `@variant`, and `--default()` in `@utility`. Their **engine Part and cheat-sheet utility tables are the specific sections now out of date** — the conceptual material on utility-first CSS and the JIT scanner still reads fine. The new set is written against **v4.3.3**, verified against a real local build, and assumes the [`css/`](./css/css-mastery-guide.md) set rather than re-teaching CSS.
+
+The legacy Vite guide (`legacy/vite/vite-mastery-guide.md`) is **superseded by the `vite/` set above**. It was written against "Vite 8" generically and was *curiosity-driven*; the new set is goal-driven (building JS/TS apps), written against **Vite 8.3.0** and **Vitest 5.0.0**, and verified by scaffolding and building real projects. The legacy doc's **specific errors**: it recommends the `rolldown-vite` package as a current migration path (obsolete since Vite 8 shipped); it never mentions that `esbuild` options like `drop` are **silently ignored** in Vite 8, that the object form of `manualChunks` now fails the build, or that `output.codeSplitting` replaces chunking via `manualChunks`/`advancedChunks`; it shows `alias: { '@': '/src' }` (non-absolute) as a normal pattern; and it predates Vite 8.1–8.3 entirely (bundled dev mode, `server.hmr` → `server.ws`, top-level `input`/`tsconfig`, native-config-loader warnings). It also has no coverage of deployment, Vitest, or monorepos. Kept for reference only.
 
 The legacy Claude Code guide (`legacy/claude/claude-code-mastery-guide.md`) is **superseded by the `claude-code/` set above** for everything about the CLI. Much of its version-specific material is now wrong — it predates auto mode becoming the default starting permission mode, auto memory, `.claude/rules/`, MCP tool search, and the skills-over-`.claude/commands/` migration. It is kept only because it also covers the **Claude Agent SDK and Claude API**, which the new set deliberately excludes; treat those two Parts as the reason to open it, and nothing else.
 
