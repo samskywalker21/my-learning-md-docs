@@ -11,6 +11,10 @@ One folder per topic, one or more markdown docs inside. Roadmaps between two rel
 ├── topic-name/
 │   ├── topic-mastery-guide.md    ← overview (or the sole doc for the topic)
 │   └── topic-subarea.md          ← focused sub-docs, for large topics
+├── family-name/                  ← a family of related products (e.g. tanstack/)
+│   └── product-name/
+│       ├── product-mastery-guide.md
+│       └── product-subarea.md
 ├── roadmaps/
 │   └── from-to-to-roadmap.md     ← checklist from one topic to a related one
 ├── legacy/
@@ -97,6 +101,13 @@ Docs written against the current [`prompt.md`](./prompt.md) template.
 | Vite — Plugins & Monorepos (Parts 10–11) | [`vite/vite-plugins-monorepo.md`](./vite/vite-plugins-monorepo.md) | September 13, 2026 | ✅ done |
 | Vite — Testing with Vitest (Part 12) | [`vite/vite-testing-vitest.md`](./vite/vite-testing-vitest.md) | September 13, 2026 | ✅ done |
 | Vite — SSR & Internals (Parts 13–14) | [`vite/vite-ssr-internals.md`](./vite/vite-ssr-internals.md) | September 13, 2026 | ✅ done |
+| TanStack Router — overview | [`tanstack/tanstack-router/tanstack-router-mastery-guide.md`](./tanstack/tanstack-router/tanstack-router-mastery-guide.md) | September 14, 2026 | ✅ done |
+| TanStack Router — Foundations (Parts 1–2) | [`tanstack/tanstack-router/tanstack-router-foundations.md`](./tanstack/tanstack-router/tanstack-router-foundations.md) | September 14, 2026 | ✅ done |
+| TanStack Router — Routing & Navigation (Parts 3–4) | [`tanstack/tanstack-router/tanstack-router-routing-navigation.md`](./tanstack/tanstack-router/tanstack-router-routing-navigation.md) | September 14, 2026 | ✅ done |
+| TanStack Router — Search Params (Part 5) | [`tanstack/tanstack-router/tanstack-router-search-params.md`](./tanstack/tanstack-router/tanstack-router-search-params.md) | September 14, 2026 | ✅ done |
+| TanStack Router — Data Loading (Parts 6–7) | [`tanstack/tanstack-router/tanstack-router-data-loading.md`](./tanstack/tanstack-router/tanstack-router-data-loading.md) | September 14, 2026 | ✅ done |
+| TanStack Router — Guards & Lifecycle (Parts 8–9) | [`tanstack/tanstack-router/tanstack-router-guards-lifecycle.md`](./tanstack/tanstack-router/tanstack-router-guards-lifecycle.md) | September 14, 2026 | ✅ done |
+| TanStack Router — Performance & Internals (Parts 10–13) | [`tanstack/tanstack-router/tanstack-router-performance-internals.md`](./tanstack/tanstack-router/tanstack-router-performance-internals.md) | September 14, 2026 | ✅ done |
 
 ## 🧭 Roadmaps
 

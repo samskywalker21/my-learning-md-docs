@@ -17,6 +17,8 @@ topic-name/
 
 Some topics (e.g. `mysql`, `postgres`) are split into a `*-mastery-guide.md` overview plus focused sub-docs (`*-foundations.md`, `*-core-querying.md`, `*-data-modeling-types.md`, `*-query-engine-indexing.md`, `*-transactions-concurrency.md`, `*-administration-operations.md`). Smaller topics (e.g. `docker`, `javascript`) are a single mastery guide.
 
+Where several related products share a vendor/family, the family gets a parent folder and each product a subfolder: `tanstack/tanstack-router/tanstack-router-*.md`, with `tanstack/tanstack-query/` and other TanStack products to follow. Doc filenames still carry the product prefix, so they stay unambiguous when searched across the repo.
+
 `README.md` maintains a top-level index table (topic → doc path → last updated). **Update this table whenever a doc is added or substantially revised** — it's the entry point for finding docs.
 
 ## Doc conventions (established by existing docs — follow them when creating or editing a doc)
