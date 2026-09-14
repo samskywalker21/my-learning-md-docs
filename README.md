@@ -108,6 +108,14 @@ Docs written against the current [`prompt.md`](./prompt.md) template.
 | TanStack Router — Data Loading (Parts 6–7) | [`tanstack/tanstack-router/tanstack-router-data-loading.md`](./tanstack/tanstack-router/tanstack-router-data-loading.md) | September 14, 2026 | ✅ done |
 | TanStack Router — Guards & Lifecycle (Parts 8–9) | [`tanstack/tanstack-router/tanstack-router-guards-lifecycle.md`](./tanstack/tanstack-router/tanstack-router-guards-lifecycle.md) | September 14, 2026 | ✅ done |
 | TanStack Router — Performance & Internals (Parts 10–13) | [`tanstack/tanstack-router/tanstack-router-performance-internals.md`](./tanstack/tanstack-router/tanstack-router-performance-internals.md) | September 14, 2026 | ✅ done |
+| Node.js — overview | [`nodejs/nodejs-mastery-guide.md`](./nodejs/nodejs-mastery-guide.md) | September 14, 2026 | ✅ done |
+| Node.js — Runtime Foundations (Parts 1–3) | [`nodejs/nodejs-runtime-foundations.md`](./nodejs/nodejs-runtime-foundations.md) | September 14, 2026 | ✅ done |
+| Node.js — Modules & Packages (Parts 4–5) | [`nodejs/nodejs-modules-packages.md`](./nodejs/nodejs-modules-packages.md) | September 14, 2026 | ✅ done |
+| Node.js — Files, Streams & Buffers (Parts 6–7) | [`nodejs/nodejs-files-streams-buffers.md`](./nodejs/nodejs-files-streams-buffers.md) | September 14, 2026 | ✅ done |
+| Node.js — Processes & Parallelism (Parts 8–9) | [`nodejs/nodejs-processes-workers.md`](./nodejs/nodejs-processes-workers.md) | September 14, 2026 | ✅ done |
+| Node.js — HTTP & Networking (Parts 10–11) | [`nodejs/nodejs-http-networking.md`](./nodejs/nodejs-http-networking.md) | September 14, 2026 | ✅ done |
+| Node.js — Testing & Debugging (Part 12) | [`nodejs/nodejs-testing-debugging.md`](./nodejs/nodejs-testing-debugging.md) | September 14, 2026 | ✅ done |
+| Node.js — Production & Diagnostics (Parts 13–14) | [`nodejs/nodejs-production-diagnostics.md`](./nodejs/nodejs-production-diagnostics.md) | September 14, 2026 | ✅ done |
 
 ## 🧭 Roadmaps
 
@@ -131,7 +139,7 @@ Docs pending a re-write against the current template.
 | JavaScript | [`legacy/javascript/javascript-mastery-guide.md`](./legacy/javascript/javascript-mastery-guide.md) | September 6, 2026 | 🔄 needs re-write |
 | JavaScript — for React | [`legacy/javascript/javascript-for-react-mastery.md`](./legacy/javascript/javascript-for-react-mastery.md) | September 6, 2026 | 🔄 needs re-write |
 | JavaScript — for TypeScript | [`legacy/javascript/javascript-for-typescript-mastery.md`](./legacy/javascript/javascript-for-typescript-mastery.md) | September 6, 2026 | 🔄 needs re-write |
-| Node.js | [`legacy/nodejs/nodejs-mastery-guide.md`](./legacy/nodejs/nodejs-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
+| Node.js | [`legacy/nodejs/nodejs-mastery-guide.md`](./legacy/nodejs/nodejs-mastery-guide.md) | September 3, 2026 | ⤴️ superseded by [`nodejs/`](./nodejs/nodejs-mastery-guide.md) |
 | Postgres SQL | [`legacy/postgres/postgres-mastery-guide.md`](./legacy/postgres/postgres-mastery-guide.md) | September 3, 2026 | 🔄 needs re-write |
 | React | [`legacy/react/react-mastery-guide.md`](./legacy/react/react-mastery-guide.md) | September 6, 2026 | 🔄 needs re-write |
 | Tailwind CSS | [`legacy/tailwindcss/tailwindcss-mastery-guide.md`](./legacy/tailwindcss/tailwindcss-mastery-guide.md) | September 3, 2026 | ⤴️ superseded by [`tailwindcss/`](./tailwindcss/tailwindcss-mastery-guide.md) |
